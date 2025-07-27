@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Give Suggestion</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #f4f4f9;
+    }
+
+    .navbar {
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .navbar a {
+      color: #ecf0f1;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 12px;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #219150;
+    }
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <a href="{{ url_for('t_interface') }}"><button>← Back to Dashboard</button></a>
+  <a href="/logout">Logout</a>
+</div>
+
+<div class="container">
+  {% include 'flash.html' %}
+
+  <h2>Give a Suggestion</h2>
+  <form action="/submit_teacher_suggestion" method="POST">
+    <label for="title">Suggestion Title</label>
+    <input type="text" id="title" name="title" required>
+
+    <label for="category">Category</label>
+<select id="category" name="category" required>
+  <option value="">-- Select Category --</option>
+  <option value="Teaching Methodology">Teaching Methodology</option>
+  <option value="Curriculum Enhancement">Curriculum Enhancement</option>
+  <option value="Classroom Infrastructure">Classroom Infrastructure</option>
+  <option value="Lab Equipment/Resources">Lab Equipment/Resources</option>
+  <option value="Digital Tools & Platforms">Digital Tools & Platforms</option>
+  <option value="Student Engagement Strategies">Student Engagement Strategies</option>
+  <option value="Extracurricular Activities">Extracurricular Activities</option>
+  <option value="Campus Cleanliness & Environment">Campus Cleanliness & Environment</option>
+  <option value="Faculty Collaboration">Faculty Collaboration</option>
+  <option value="Other">Other</option>
+</select>
+
+
+    <label for="details">Description</label>
+    <textarea id="details" name="details" rows="6" required></textarea>
+
+    <label for="date">Date of Incident</label>
+    <input type="date" id="date" name="date" required>
+
+    <button type="submit">Submit Suggestion</button>
+  </form>
+</div>
+
+</body>
+</html>

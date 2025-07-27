@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Report Anonymously</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #f4f4f9;
+    }
+
+    .navbar {
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .navbar a {
+      color: #ecf0f1;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 12px;
+      background-color: #8e44ad;
+      color: white;
+      border: none;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #7b3ea1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <a href="{{ url_for('t_interface') }}"><button>← Back to Dashboard</button></a>
+  <a href="/logout">Logout</a>
+</div>
+
+<div class="container">
+  {% include 'flash.html' %}
+
+  <h2>Report Anonymously</h2>
+  <form action="/submit_anonymous_teacher" method="POST">
+    <label for="category">Category</label>
+    <select id="category" name="category" required>
+      <option value="">-- Select Category --</option>
+      <option value="Misconduct">Misconduct</option>
+      <option value="Unethical Behavior">Unethical Behavior</option>
+      <option value="Management Issues">Management Issues</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <label for="details">Details</label>
+    <textarea id="details" name="details" rows="6" required></textarea>
+
+    <button type="submit">Submit Anonymously</button>
+  </form>
+</div>
+
+</body>
+</html>

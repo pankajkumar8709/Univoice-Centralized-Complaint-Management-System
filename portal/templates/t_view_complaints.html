@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Registered Complaints</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Same CSS as before, you can keep all styling */
+    body { font-family: 'Poppins', sans-serif; margin: 0; background-color: #f8f9fa; color: #333; }
+    .navbar { background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .navbar .btn-group { display: flex; gap: 10px; }
+    .navbar a button { background: rgba(255,255,255,0.15); color: white; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 500; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+    .navbar a button:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
+    .container { max-width: 1200px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); display: none; }
+    h2 { text-align: center; color: #3a0ca3; margin-bottom: 1.5rem; font-size: 1.8rem; position: relative; }
+    h2::after { content: ''; display: block; width: 80px; height: 4px; background: linear-gradient(to right, #4361ee, #f72585); margin: 10px auto; border-radius: 2px; }
+    .view-buttons { display: flex; justify-content: center; gap: 20px; margin: 2rem auto; max-width: 1200px; flex-wrap: wrap; }
+    .view-btn { padding: 18px 30px; font-size: 1.1rem; font-weight: 600; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .view-btn i { font-size: 1.3rem; }
+    .view-btn.complaints { background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; }
+    .view-btn.suggestions { background: linear-gradient(135deg, #7209b7 0%, #560bad 100%); color: white; }
+    .view-btn.anonymous { background: linear-gradient(135deg, #f72585 0%, #b5179e 100%); color: white; }
+    .view-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+    table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+    th { background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; font-weight: 500; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+    tr:hover { background-color: #f1f5fe; }
+    @media (max-width: 768px) {
+      .container { padding: 1.5rem; margin: 1rem; }
+      .view-btn { padding: 15px 20px; font-size: 1rem; }
+      th, td { padding: 12px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="btn-group">
+    <a href="{{ url_for('t_interface') }}"><button><i class="fas fa-arrow-left"></i> Back to Dashboard</button></a>
+    <a href="{{ url_for('t_view_page') }}"><button><i class="fas fa-sync-alt"></i> Refresh</button></a>
+  </div>
+  <a href="/logout"><button><i class="fas fa-sign-out-alt"></i> Logout</button></a>
+</div>
+
+<!-- Big View Buttons -->
+<div class="view-buttons">
+  <button class="view-btn complaints" onclick="showSection('complaints')"><i class="fas fa-exclamation-circle"></i> View Complaints</button>
+  <button class="view-btn suggestions" onclick="showSection('suggestions')"><i class="fas fa-lightbulb"></i> View Suggestions</button>
+  <button class="view-btn anonymous" onclick="showSection('anonymous')"><i class="fas fa-user-secret"></i> View Anonymous</button>
+</div>
+
+<!-- Complaints Section -->
+<div class="container" id="complaints-container">
+  <h2>Registered Complaints</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Title</th><th>Description</th><th>Category</th><th>Date</th><th>Others</th></tr>
+    </thead>
+    <tbody>
+      {% if complaints %}
+        {% for c in complaints %}
+        <tr>
+          <td>{{ c.id }}</td>
+          <td>{{ c.title }}</td>
+          <td>{{ c.complaint }}</td>
+          <td>{{ c.category }}</td>
+          <td>{{ c.date }}</td>
+          <td>{{ c.others }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="6" style="text-align: center;">No complaints registered.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Suggestions Section -->
+<div class="container" id="suggestions-container">
+  <h2>Registered Suggestions</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Title</th><th>Category</th><th>Description</th><th>Date</th></tr>
+    </thead>
+    <tbody>
+      {% if suggestion %}
+        {% for s in suggestion %}
+        <tr>
+          <td>{{ s.id }}</td>
+          <td>{{ s.title }}</td>
+          <td>{{ s.category }}</td>
+          <td>{{ s.complaint }}</td>
+          <td>{{ s.date }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="5" style="text-align: center;">No suggestions registered.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Anonymous Section -->
+<div class="container" id="anonymous-container">
+  <h2>Registered Anonymous Complaints</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Title</th><th>Category</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      {% if anonymous %}
+        {% for a in anonymous %}
+        <tr>
+          <td>{{ a.id }}</td>
+          <td>{{ a.title }}</td>
+          <td>{{ a.category }}</td>
+          <td>{{ a.complaint }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="4" style="text-align: center;">No anonymous complaints registered.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function showSection(sectionType) {
+    document.querySelectorAll('.container').forEach(container => {
+      container.style.display = 'none';
+    });
+    const container = document.getElementById(`${sectionType}-container`);
+    if (container) {
+      container.style.display = 'block';
+      container.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  window.onload = function() {
+    showSection('complaints');
+  };
+</script>
+
+</body>
+</html>
