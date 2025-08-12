@@ -1,7 +1,7 @@
 import sqlite3
 
 # Create or connect to a new SQLite database
-conn = sqlite3.connect('mycollege.db')
+conn = sqlite3.connect('newmycollege.db')
 cursor = conn.cursor()
 
 # Create students table
@@ -55,16 +55,38 @@ admins = [
     ('AC003', 'AC003', 'Ram', 'Bus'),
     ('AC004', 'AC004', 'Shubankar', 'Mess'),
     ('AC005', 'AC005', 'AVS Pawan Kalyan', 'Academics'),
-    ('AC006', 'AC006', 'NVJ Rao', 'Officials')
+    ('AC006', 'AC006', 'NVJ Rao', 'Officials'),
+    ('AC007', 'AC007', 'Basic Amenities', 'Basic Amenities')
+   
 ]
 
 # Insert sample data (ignores if already exists)
 cursor.executemany('INSERT OR IGNORE INTO students VALUES (?, ?, ?, ?, ?, ?)', students)
 cursor.executemany('INSERT OR IGNORE INTO teachers VALUES (?, ?, ?, ?)', teachers)
-cursor.executemany('INSERT OR IGNORE INTO admins VALUES (?, ?, ?, ?)', admins)
+
+
+cursor.executemany('INSERT OR IGNORE INTO admins VALUES (?, ?, ?, ?)',admins)
+
+
 
 # Save and close
 conn.commit()
+
+
+
+
+
+# #
+# new_admins = [
+    
+# ]
+
+# cursor.executemany('INSERT OR IGNORE INTO admins VALUES (?, ?, ?, ?)',new_admins)
+
+
+
+# # Save and close
+# conn.commit()
 conn.close()
 
 print("✅ mycollege.db created successfully with sample data.")

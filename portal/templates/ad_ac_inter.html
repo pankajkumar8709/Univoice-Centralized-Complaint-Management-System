@@ -1,239 +1,181 @@
-{% extends 'ad_base_inter.html' %}
-{% block title %}
-Academic Page Admin
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Complaints - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .status-badge { padding: 5px 10px; border-radius: 5px; color: white; font-size: 0.9em; }
+        .status-pending { background: orange; }
+        .status-in-progress { background: blue; }
+        .status-resolved { background: green; }
+        .status-rejected { background: red; }
+        .action-btn { background: #007bff; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
+        .action-btn i { margin-right: 5px; }
 
-{% block body %}
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert"
-                 style="position: fixed; top: 20px; right: 20px; z-index: 1000; min-width: 300px;
-                        box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: none;">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
+        /* Modal Styling */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                 background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 400px; position: relative; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        select, textarea, input[type="date"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .save-btn { background: green; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
+    </style>
+</head>
+<body>
 
-<style>
-    #hostel-complaints-container {
-        padding: 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
+    <h2>Academic Complaints - Admin Dashboard</h2>
 
-    .hostel-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        cursor: pointer;
-        transition: all 0.3s ease;
-        border-left: 4px solid #4361ee;
-    }
-
-    .hostel-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 25px rgba(0,0,0,0.12);
-    }
-
-    .card-icon {
-        font-size: 2rem;
-        color: #4361ee;
-        margin-bottom: 1rem;
-    }
-
-    .hostel-card h4 {
-        font-size: 1.25rem;
-        color: #2b2d42;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-    }
-
-    .hostel-card p {
-        color: #6c757d;
-        font-size: 0.95rem;
-        line-height: 1.5;
-    }
-
-    .table-section {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        margin-top: 1rem;
-        display: none;
-    }
-
-    .table-section h3 {
-        font-size: 1.5rem;
-        color: #2b2d42;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .table-section h3 i {
-        color: #4361ee;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 1rem;
-    }
-
-    th {
-        background-color: #4361ee;
-        color: white;
-        padding: 12px 16px;
-        text-align: left;
-        font-weight: 500;
-    }
-
-    td {
-        padding: 12px 16px;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-
-    tr:hover {
-        background-color: #f1f3f5;
-    }
-
-    .no-complaints {
-        text-align: center;
-        padding: 2rem;
-        color: #6c757d;
-    }
-
-    .no-complaints i {
-        font-size: 2rem;
-        color: #adb5bd;
-        margin-bottom: 1rem;
-        display: block;
-    }
-
-    .status-resolved { background: #28a745; color: white; }
-    .status-pending { background: #ffc107; color: white; }
-    .status-other { background: #dc3545; color: white; }
-    .status-badge {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        display: inline-block;
-    }
-
-    @media (max-width: 768px) {
-        #hostel-complaints-container {
-            padding: 1rem;
-        }
-
-        th, td {
-            padding: 10px 12px;
-            font-size: 0.9rem;
-        }
-
-        .hostel-card {
-            padding: 1.25rem;
-        }
-
-        .table-section h3 {
-            font-size: 1.3rem;
-        }
-    }
-</style>
-
-<div id="hostel-complaints-container">
-    <div class="hostel-card animate__animated animate__fadeInUp" onclick="toggleTable('hostels')">
-        <i class="fas fa-bed card-icon"></i>
-        <h4>Academic Related Complaints</h4>
-        <p>View all problems reported by students.</p>
-    </div>
-
-    <div class="table-section" id="hostels">
-        <h3><i class="fas fa-bed"></i> Academic Related Complaints</h3>
-        {% if complaints %}
+    <div class="table-container">
         <table>
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Complaint Details</th>
+                    <th>Complaint</th>
                     <th>Semester</th>
                     <th>Course</th>
                     <th>Section</th>
-                    <th>Date of Complaint</th>
-                    <!-- <th>Status</th> -->
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Response</th>
+                    <th>Resolved On</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                {% for complaint in complaints %}
-                <tr>
-                    <td>{{ complaint.id }}</td>
-                    <td>{{ complaint.complaint }}</td>
-                    <td>{{ complaint.semester }}</td>
-                    <td>{{ complaint.course }}</td>
-                    <td>{{ complaint.section }}</td>
-                    <td>{{ complaint.date }}</td>
-                    <!-- <td>
-                        <span class="status-badge
-                            {% if complaint.status == 'Resolved' %}status-resolved
-                            {% elif complaint.status == 'Pending' %}status-pending
-                            {% else %}status-other{% endif %}">
-                            {{ complaint.status or 'Pending' }}
+                {% if complaints %}
+                {% for c in complaints %}
+                <tr data-id="{{ c.id }}" data-status="{{ c.status|default('Pending') }}" 
+                    data-semester="{{ c.semester }}" data-course="{{ c.course }}">
+                    <td>#{{ c.id }}</td>
+                    <td>{{ c.complaint|truncate(50, true, '...') }}</td>
+                    <td>{{ c.semester }}</td>
+                    <td>{{ c.course }}</td>
+                    <td>{{ c.section }}</td>
+                    <td>{{ c.date.strftime('%Y-%m-%d') if c.date else '-' }}</td>
+                    <td>
+                        <span class="status-badge status-{{ c.status|default('Pending')|lower|replace(' ', '-') }}">
+                            {{ c.status|default('Pending') }}
                         </span>
-                    </td> -->
+                    </td>
+                    <td>{{ c.response|truncate(30, true, '...') if c.response else 'No response' }}</td>
+                    <td>{{ c.date_resolved.strftime('%Y-%m-%d') if c.date_resolved else '-' }}</td>
+                    <td>
+                        <button class="action-btn view-btn" data-id="{{ c.id }}">
+                            <i class="fas fa-edit"></i> Manage
+                        </button>
+                    </td>
                 </tr>
                 {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="10" style="text-align: center; padding: 30px;">
+                        <i class="fas fa-inbox" style="font-size: 2rem; color: #adb5bd; margin-bottom: 10px; display: block;"></i>
+                        No academic complaints found
+                    </td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
-        {% else %}
-        <div class="no-complaints">
-            <i class="fas fa-inbox"></i>
-            <p>No hostel complaints found</p>
-        </div>
-        {% endif %}
     </div>
-</div>
 
-<script>
-    function toggleTable(id) {
-        const section = document.getElementById(id);
-        if (section.style.display === 'block') {
-            section.style.display = 'none';
-        } else {
-            document.querySelectorAll('.table-section').forEach(sec => {
-                sec.style.display = 'none';
+    <!-- Complaint Detail Modal -->
+    <div class="modal" id="complaint-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Manage Complaint</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="complaint-form" action="/update-acad-complaint" method="POST">
+                    <input type="hidden" id="complaint-id" name="id">
+
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select id="status" name="status" required>
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="response">Response:</label>
+                        <textarea id="response" name="response" placeholder="Write your response here..." rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_resolved">Date Resolved:</label>
+                        <input type="date" id="date_resolved" name="date_resolved">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("complaint-modal");
+        const closeBtn = document.querySelector(".close-btn");
+        const form = document.getElementById("complaint-form");
+
+        // Open modal on "Manage" click
+        document.querySelectorAll(".view-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                const row = this.closest("tr");
+                document.getElementById("complaint-id").value = row.dataset.id;
+                document.getElementById("status").value = row.dataset.status || "Pending";
+                document.getElementById("response").value = row.querySelector("td:nth-child(8)").innerText.trim() !== "No response"
+                    ? row.querySelector("td:nth-child(8)").innerText.trim()
+                    : "";
+                document.getElementById("date_resolved").value = row.querySelector("td:nth-child(9)").innerText.trim() !== "-"
+                    ? row.querySelector("td:nth-child(9)").innerText.trim()
+                    : "";
+
+                modal.style.display = "flex";
             });
-            section.style.display = 'block';
-            section.classList.add('animate__animated', 'animate__fadeIn');
-        }
-    }
+        });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // {% if complaints %}
-        // document.getElementById("hostels").style.display = "block";
-        // {% endif %}
+        // Close modal
+        closeBtn.addEventListener("click", () => modal.style.display = "none");
+        window.addEventListener("click", (e) => {
+            if (e.target === modal) modal.style.display = "none";
+        });
 
-        setTimeout(() => {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                alert.style.transition = 'opacity 0.5s ease';
-                alert.style.opacity = '0';
-                setTimeout(() => {
-                    alert.remove();
-                }, 500);
-            });
-        }, 5000);
+        // Save changes via AJAX
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch("/update-complaint", {
+                method: "POST",
+                body: formData
+            }).then(res => res.json())
+              .then(data => {
+                  if (data.success) {
+                      alert("Complaint updated successfully!");
+                      location.reload();
+                  } else {
+                      alert("Error updating complaint.");
+                  }
+              });
+        });
     });
-</script>
+    </script>
 
-
-{% endblock %}
+</body>
+</html>

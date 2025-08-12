@@ -2,161 +2,126 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Bus Complaint Form</title>
+  <title>Bus Complaint Form | CampusCare</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
     :root {
-      --primary: #4361ee;
-      --primary-dark: #3a0ca3;
-      --accent: #f72585;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
+      --primary: #4f46e5;
+      --primary-light: #818cf8;
+      --primary-dark: #3730a3;
+      --accent: #ec4899;
+      --light: #f8fafc;
+      --dark: #0f172a;
+      --gray: #64748b;
+      --gray-light: #e2e8f0;
+      --success: #22d3ee;
+      --border-radius: 10px;
+      --box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+      background-color: var(--light);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      color: var(--dark);
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-pattern {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 5% 15%, rgba(79, 70, 229, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 95% 85%, rgba(236, 72, 153, 0.05) 0%, transparent 20%);
+      z-index: -1;
     }
 
     .container {
-      width: 100%;
-      max-width: 600px;
+      max-width: 720px;
+      margin: 2.5rem auto;
+      padding: 2rem;
       background: white;
-      border-radius: 20px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-      overflow: hidden;
-      animation: fadeInUp 0.5s ease;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .form-header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: white;
-      padding: 25px;
-      text-align: center;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
       position: relative;
+      z-index: 1;
+      animation: fadeInUp 0.6s ease;
     }
 
-    .form-header h1 {
-      font-size: 1.8rem;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    .form-header::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 3px;
-      background: white;
-      border-radius: 3px;
-    }
-
-    .form-body {
-      padding: 30px;
-    }
-
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      padding: 10px 15px;
-      margin-bottom: 20px;
-      background: rgba(255,255,255,0.2);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      backdrop-filter: blur(5px);
-    }
-
-    .back-btn:hover {
-      background: rgba(255,255,255,0.3);
-      transform: translateX(-5px);
-    }
-
-    .back-btn i {
-      margin-right: 8px;
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .form-group {
-      margin-bottom: 25px;
-      position: relative;
+      margin-bottom: 1.5rem;
     }
 
     label {
       display: block;
-      margin-bottom: 10px;
-      font-weight: 500;
-      color: var(--dark);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
       font-size: 0.95rem;
+      color: var(--dark);
     }
 
     .input-wrapper {
       position: relative;
     }
 
-    .input-icon {
+    .input-wrapper i {
       position: absolute;
-      left: 15px;
+      left: 0.75rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--gray);
-      font-size: 1.1rem;
-    }
-
-    textarea,
-    select,
-    input[type="date"] {
-      width: 100%;
-      padding: 15px 15px 15px 45px;
       font-size: 1rem;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      background-color: white;
-      transition: all 0.3s ease;
     }
 
-    textarea:focus,
-    select:focus,
-    input[type="date"]:focus {
-      border-color: var(--primary);
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+      font-size: 0.95rem;
+      border: 1px solid var(--gray-light);
+      border-radius: 8px;
+      background: var(--light);
+      transition: var(--transition);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(67,97,238,0.2);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      background: white;
     }
 
     textarea {
-      min-height: 150px;
+      min-height: 120px;
+      padding: 0.75rem;
       resize: vertical;
     }
 
@@ -164,169 +129,253 @@
       appearance: none;
       background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
       background-repeat: no-repeat;
-      background-position: right 15px center;
+      background-position: right 0.75rem center;
       background-size: 1em;
     }
 
-    .submit-btn {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: white;
+    button, .back-btn {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
       border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(67,97,238,0.3);
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+      width: 100%;
+      justify-content: center;
     }
 
     .submit-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(67,97,238,0.4);
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
     }
 
     .submit-btn:active {
       transform: translateY(0);
     }
 
-    .submit-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: 0.5s;
+    .back-btn {
+      background: var(--gray-light);
+      color: var(--dark);
+      margin-bottom: 1.5rem;
     }
 
-    .submit-btn:hover::before {
-      left: 100%;
+    .back-btn i {
+      font-size: 1rem;
     }
 
+    .back-btn:hover {
+      background: var(--gray);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .back-btn:active {
+      transform: translateY(0);
+    }
+
+    .alert {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      min-width: 280px;
+      max-width: 400px;
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      box-shadow: var(--box-shadow);
+      border-left: 4px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: slideInRight 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+    }
+
+    .alert i {
+      font-size: 1.25rem;
+      color: var(--primary);
+    }
+
+    .alert-content {
+      flex: 1;
+      font-size: 0.9rem;
+      color: var(--dark);
+    }
+
+    .alert .close {
+      background: none;
+      border: none;
+      color: var(--gray);
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .alert .close:hover {
+      color: var(--dark);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    /* Responsive adjustments */
     @media (max-width: 768px) {
-      .form-body {
-        padding: 25px;
+      .container {
+        padding: 1.5rem;
+        margin: 1.5rem;
       }
-      
-      .form-header h1 {
-        font-size: 1.6rem;
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      input[type="date"],
+      select,
+      textarea {
+        padding: 0.75rem 0.75rem 0.75rem 2.25rem;
+      }
+
+      .input-wrapper i {
+        left: 0.6rem;
       }
     }
 
-    @media (max-width: 480px) {
-      body {
-        padding: 15px;
-      }
-      
+    @media (max-width: 576px) {
       .container {
-        border-radius: 15px;
+        padding: 1.25rem;
+        margin: 1rem;
       }
-      
-      .form-header {
-        padding: 20px;
+
+      h1 {
+        font-size: 1.5rem;
       }
-      
-      .form-body {
-        padding: 20px;
-      }
-      
-      textarea,
-      select,
-      input[type="date"] {
-        padding: 12px 12px 12px 40px;
-      }
-      
-      .input-icon {
-        left: 12px;
-        font-size: 1rem;
+
+      .alert {
+        min-width: calc(100% - 2rem);
       }
     }
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 </head>
 <body>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-     {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">
-            <button type="button" class="m1-2 mb-1 close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            {{ message }}
-        </div>
-     {% endfor %}
-  {% endif %}
-  {% endwith %}
+  <div class="bg-pattern"></div>
+
+  {% include 'flash.html' %}
 
   <div class="container">
-    <div class="form-header">
-      <a href="{{ url_for('s_interface') }}" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
-      <h1>Bus Complaint Form</h1>
-    </div>
-    
-    <div class="form-body">
-      <form action="/submit_bus_complaint" method="POST">
-        <div class="form-group">
-          <label for="complaint">Complaint Description</label>
-          <div class="input-wrapper">
-            <i class="fas fa-comment-alt input-icon"></i>
-            <textarea id="complaint" name="complaint" placeholder="Describe your bus-related issue..."></textarea>
-          </div>
-        </div>
+    <a href="{{ url_for('s_interface') }}" class="back-btn animate__animated animate__fadeIn">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+    <h1 class="animate__animated animate__fadeIn">Bus Complaint Form</h1>
 
-        <div class="form-group">
-          <label for="bus">Bus Number</label>
-          <div class="input-wrapper">
-            <i class="fas fa-bus input-icon"></i>
-            <select id="bus" name="bus">
-              <option value="" disabled selected>Select your bus number</option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-              <option>7</option>
-              <option>8</option>
-              <option>9</option>
-              <option>10</option>
-              <option>11</option>
-              <option>12</option>
-              <option>13</option>
-              <option>14</option>
-              <option>15</option>
-              <option>16</option>
-              <option>17</option>
-              <option>18</option>
-              <option>19</option>
-              <option>20</option>
-              <option>21</option>
-            </select>
-          </div>
+    <form action="/submit_bus_complaint" method="POST">
+      <div class="form-group animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+        <label for="complaint">Complaint Description</label>
+        <div class="input-wrapper">
+          <i class="fas fa-comment-alt"></i>
+          <textarea id="complaint" name="complaint" placeholder="Describe your bus-related issue..."></textarea>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="date">Date of Complaint</label>
-          <div class="input-wrapper">
-            <i class="fas fa-calendar-alt input-icon"></i>
-            <input type="date" id="date" name="date">
-          </div>
+      <div class="form-group animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+        <label for="bus">Bus Number</label>
+        <div class="input-wrapper">
+          <i class="fas fa-bus"></i>
+          <select id="bus" name="bus">
+            <option value="" disabled selected>Select your bus number</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+            <option>11</option>
+            <option>12</option>
+            <option>13</option>
+            <option>14</option>
+            <option>15</option>
+            <option>16</option>
+            <option>17</option>
+            <option>18</option>
+            <option>19</option>
+            <option>20</option>
+            <option>21</option>
+          </select>
         </div>
+      </div>
 
-        <button type="submit" class="submit-btn">Submit Complaint</button>
-      </form>
-    </div>
+      <div class="form-group animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+        <label for="date">Date of Complaint</label>
+        <div class="input-wrapper">
+          <i class="fas fa-calendar-day"></i>
+          <input type="date" id="date" name="date">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+        <i class="fas fa-paper-plane"></i> Submit Complaint
+      </button>
+    </form>
   </div>
-<!-- Optional JavaScript -->
-      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-      <script src='https://kit.fontawesome.com/a076d05399.js'></script>
-      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    // Auto-set date to today
+    document.addEventListener('DOMContentLoaded', function() {
+      const dateInput = document.getElementById('date');
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+      dateInput.value = formattedDate;
+    });
+
+    // Alert handling
+    document.querySelectorAll('.alert .close').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.closest('.alert').style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => {
+          this.closest('.alert').remove();
+        }, 500);
+      });
+    });
+
+    setTimeout(() => {
+      document.querySelectorAll('.alert').forEach(alert => {
+        alert.style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => {
+          alert.remove();
+        }, 500);
+      });
+    }, 5000);
+  </script>
 </body>
 </html>

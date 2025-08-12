@@ -3,9 +3,16 @@ from portal import app,teachers,admins,students,db,engine
 from sqlalchemy import select
 from portal.models import acad,mess,hostel,sports,s_anonymous,s_suggest,basic,buses,T_Anonymous,T_Complaints,T_Suggestion
 
-from datetime import datetime
+import json
+from flask import jsonify
 
+from datetime import datetime
 @app.route('/')
+def home():
+    return render_template('home.html')
+
+
+@app.route('/index')
 def index():
     return render_template('index.html')
 
@@ -349,6 +356,9 @@ def admin_login():
                     elif category=='Academics':
                         flash("✅ Login successful",category='success')
                         return redirect(url_for('admin_a_complaints'))
+                    elif category=='Basic Amenities':
+                        flash("✅ Login successful",category='success')
+                        return redirect(url_for('admin_bas_complaints'))
                     elif category=='Officials':
                         flash("✅ Login successful",category='success')
                         return redirect(url_for('view_admin_complaint'))
@@ -365,13 +375,55 @@ def admin_login():
 @app.route('/admin_a_complaints', methods=['GET', 'POST'])
 def admin_a_complaints():
     name = session.get('user')
-    category=session.get('category')
-    complaints=acad.query.all()
-    return render_template('ad_ac_inter.html',complaints=complaints,name=name,category=category)
+    category = session.get('category')
+
+    if request.method == 'POST':
+        complaint_id = request.form.get('complaint_id')
+        new_status = request.form.get('status')
+        response_text = request.form.get('response')
+
+        complaint = acad.query.get(complaint_id)
+        if complaint:
+            complaint.status = new_status
+            complaint.response = response_text
+
+            # Set date_resolved only when marked as resolved
+            if new_status.lower() == 'resolved':
+                complaint.date_resolved = datetime.now()
+            else:
+                complaint.date_resolved = None
+
+            db.session.commit()
+
+    complaints = acad.query.all()
+    return render_template('ad_ac_inter.html', complaints=complaints, name=name, category=category)
+
+
+
+
+
 @app.route('/admin_h_complaints')
 def admin_h_complaints():
     name = session.get('user')
     category=session.get('category')
+
+    if request.method == 'POST':
+        complaint_id = request.form.get('complaint_id')
+        new_status = request.form.get('status')
+        response_text = request.form.get('response')
+
+        complaint = hostel.query.get(complaint_id)
+        if complaint:
+            complaint.status = new_status
+            complaint.response = response_text
+
+            # Set date_resolved only when marked as resolved
+            if new_status.lower() == 'resolved':
+                complaint.date_resolved = datetime.now()
+            else:
+                complaint.date_resolved = None
+
+            db.session.commit()
     complaints=hostel.query.all()
     return render_template('ad_h_inter.html',complaints=complaints,name=name,category=category)
 
@@ -379,6 +431,24 @@ def admin_h_complaints():
 def admin_m_complaints():
     name = session.get('user')
     category=session.get('category')
+
+    if request.method == 'POST':
+        complaint_id = request.form.get('complaint_id')
+        new_status = request.form.get('status')
+        response_text = request.form.get('response')
+
+        complaint = mess.query.get(complaint_id)
+        if complaint:
+            complaint.status = new_status
+            complaint.response = response_text
+
+            # Set date_resolved only when marked as resolved
+            if new_status.lower() == 'resolved':
+                complaint.date_resolved = datetime.now()
+            else:
+                complaint.date_resolved = None
+
+            db.session.commit()
     complaints=mess.query.all()
     return render_template('ad_mes_inter.html',complaints=complaints,name=name,category=category)
 
@@ -386,6 +456,25 @@ def admin_m_complaints():
 def admin_sp_complaints():
     name = session.get('user')
     category=session.get('category')
+
+    if request.method == 'POST':
+        complaint_id = request.form.get('complaint_id')
+        new_status = request.form.get('status')
+        response_text = request.form.get('response')
+
+        complaint = sports.query.get(complaint_id)
+        if complaint:
+            complaint.status = new_status
+            complaint.response = response_text
+
+            # Set date_resolved only when marked as resolved
+            if new_status.lower() == 'resolved':
+                complaint.date_resolved = datetime.now()
+            else:
+                complaint.date_resolved = None
+
+            db.session.commit()
+    
     complaints=sports.query.all()
     return render_template('ad_spo_inter.html',complaints=complaints,name=name,category=category)
 
@@ -393,6 +482,25 @@ def admin_sp_complaints():
 def admin_bas_complaints():
     name = session.get('user')
     category=session.get('category')
+
+    if request.method == 'POST':
+        complaint_id = request.form.get('complaint_id')
+        new_status = request.form.get('status')
+        response_text = request.form.get('response')
+
+        complaint = basic.query.get(complaint_id)
+        if complaint:
+            complaint.status = new_status
+            complaint.response = response_text
+
+            # Set date_resolved only when marked as resolved
+            if new_status.lower() == 'resolved':
+                complaint.date_resolved = datetime.now()
+            else:
+                complaint.date_resolved = None
+
+            db.session.commit()
+
     complaints=basic.query.all()
     return render_template('ad_bas_inter.html',complaints=complaints,name=name,category=category)
 
@@ -400,6 +508,24 @@ def admin_bas_complaints():
 def admin_bus_complaints():
     name = session.get('user')
     category=session.get('category')
+
+    if request.method == 'POST':
+        complaint_id = request.form.get('complaint_id')
+        new_status = request.form.get('status')
+        response_text = request.form.get('response')
+
+        complaint = buses.query.get(complaint_id)
+        if complaint:
+            complaint.status = new_status
+            complaint.response = response_text
+
+            # Set date_resolved only when marked as resolved
+            if new_status.lower() == 'resolved':
+                complaint.date_resolved = datetime.now()
+            else:
+                complaint.date_resolved = None
+
+            db.session.commit()
     complaints=buses.query.all()
     return render_template('ad_bus_inter.html',complaints=complaints,name=name,category=category)
 
@@ -408,8 +534,6 @@ def admin_bus_complaints():
 def view_admin_complaint():
     name = session.get('user')
     category=session.get('category')
-    
-
     return render_template('ad_off_inter.html',name=name,category=category)
 
 @app.route('/view_teacher_complaints')
@@ -421,6 +545,8 @@ def view_teacher_complaints():
     anonymous=T_Anonymous.query.all()
     # Add your logic to show teacher complaints
     return render_template('ad_teachers_complaints.html',complaints=complaints,suggest=suggest,anonymous=anonymous,name=name,category=category)
+
+
 
 @app.route('/view_student_complaints')
 def view_student_complaints():
@@ -434,3 +560,178 @@ def view_student_complaints():
     bas=basic.query.all()
     # Add your logic to show student complaints
     return render_template('ad_students_complaints.html',complaints=complaints,hostels=hostels,mes=mes,sp=sp,bs=bs,sg=sg,an=an,bas=bas)
+
+
+
+    # new code to handle admin complaints for changing status and response js
+@app.route('/api/complaints/<int:complaint_id>')
+def get_complaint_details(complaint_id):
+    # Fetch complaint from your database
+    complaint = db.session.query(hostel).filter_by(id=complaint_id).first()
+    
+    if not complaint:
+        return jsonify({'error': 'Complaint not found'}), 404    
+    # Convert complaint to dictionary
+    complaint_data = {
+        'id': complaint.id,
+        'complaint': complaint.complaint,
+        'hostel_no': complaint.hostel_no,
+        'room_no': complaint.room_no,
+        'date': complaint.date.strftime('%Y-%m-%d') if complaint.date else None,
+        'status': complaint.status,
+        'response': complaint.response,
+        'date_resolved': complaint.date_resolved.strftime('%Y-%m-%d') if complaint.date_resolved else None,
+        
+}
+    
+    return jsonify(complaint_data)
+
+
+@app.route("/update-acad-complaint", methods=["POST"])
+def update_complaint():
+    complaint_id = request.form.get("id")
+    status = request.form.get("status")
+    response = request.form.get("response")
+    date_resolved_str = request.form.get("date_resolved")  # string from form
+
+    complaint = acad.query.get(complaint_id)
+    if complaint:
+        complaint.status = status
+        complaint.response = response
+
+        # Convert string to Python date object
+        if date_resolved_str:
+            try:
+                complaint.date_resolved = datetime.strptime(date_resolved_str, "%Y-%m-%d").date()
+            except ValueError:
+                return jsonify({"success": False, "error": "Invalid date format"}), 400
+        else:
+            complaint.date_resolved = None
+
+        db.session.commit()
+        return jsonify({"success": True})
+
+    return jsonify({"success": False, "error": "Complaint not found"}), 404
+
+@app.route("/update-hostel-complaint", methods=["POST"])
+def update_hostel_complaint():  
+    complaint_id = request.form.get("id")
+    status = request.form.get("status")
+    response = request.form.get("response")
+    date_resolved_str = request.form.get("date_resolved")
+    complaint = hostel.query.get(complaint_id)
+    if complaint:
+        complaint.status = status
+        complaint.response = response
+
+        if date_resolved_str:
+            try:
+                complaint.date_resolved = datetime.strptime(date_resolved_str, "%Y-%m-%d").date()
+            except ValueError:
+                return jsonify({"success": False, "error": "Invalid date format"}), 400
+        else:
+            complaint.date_resolved = None
+
+        db.session.commit()
+        return jsonify({"success": True})
+    
+    return jsonify({"success": False, "error": "Complaint not found"}), 404
+
+@app.route('/update-basic-complaint', methods=['POST'])
+def update_basic_complaint():
+    complaint_id = request.form.get("id")
+    status = request.form.get("status")
+    response = request.form.get("response")
+    date_resolved_str = request.form.get("date_resolved")
+
+    complaint = basic.query.get(complaint_id)
+    if complaint:
+        complaint.status = status
+        complaint.response = response
+
+        if date_resolved_str:
+            try:
+                complaint.date_resolved = datetime.strptime(date_resolved_str, "%Y-%m-%d").date()
+            except ValueError:
+                return jsonify({"success": False, "error": "Invalid date format"}), 400
+        else:
+            complaint.date_resolved = None
+
+        db.session.commit()
+        return jsonify({"success": True})
+
+    return jsonify({"success": False, "error": "Complaint not found"}), 404
+
+@app.route('/update-mess-complaint', methods=['POST'])
+def update_mess_complaint():
+    complaint_id = request.form.get("id")
+    status = request.form.get("status")
+    response = request.form.get("response")
+    date_resolved_str = request.form.get("date_resolved")
+
+    complaint = mess.query.get(complaint_id)
+    if complaint:
+        complaint.status = status
+        complaint.response = response
+
+        if date_resolved_str:
+            try:
+                complaint.date_resolved = datetime.strptime(date_resolved_str, "%Y-%m-%d").date()
+            except ValueError:
+                return jsonify({"success": False, "error": "Invalid date format"}), 400
+        else:
+            complaint.date_resolved = None
+
+        db.session.commit()
+        return jsonify({"success": True})
+
+    return jsonify({"success": False, "error": "Complaint not found"}), 404
+@app.route('/update-sports-complaint', methods=['POST'])
+def update_sports_complaint():  
+    complaint_id = request.form.get("id")
+    status = request.form.get("status")
+    response = request.form.get("response")
+    date_resolved_str = request.form.get("date_resolved")
+
+    complaint = sports.query.get(complaint_id)
+    if complaint:
+        complaint.status = status
+        complaint.response = response
+
+        if date_resolved_str:
+            try:
+                complaint.date_resolved = datetime.strptime(date_resolved_str, "%Y-%m-%d").date()
+            except ValueError:
+                return jsonify({"success": False, "error": "Invalid date format"}), 400
+        else:
+            complaint.date_resolved = None
+
+        db.session.commit()
+        return jsonify({"success": True})
+
+    return jsonify({"success": False, "error": "Complaint not found"}), 404
+
+@app.route('/update-bus-complaint', methods=['POST'])
+def update_bus_complaint():
+    complaint_id = request.form.get("id")
+    status = request.form.get("status")
+    response = request.form.get("response")
+    date_resolved_str = request.form.get("date_resolved")
+
+    complaint = buses.query.get(complaint_id)
+    if complaint:
+        complaint.status = status
+        complaint.response = response
+
+        if date_resolved_str:
+            try:
+                complaint.date_resolved = datetime.strptime(date_resolved_str, "%Y-%m-%d").date()
+            except ValueError:
+                return jsonify({"success": False, "error": "Invalid date format"}), 400
+        else:
+            complaint.date_resolved = None
+
+        db.session.commit()
+        return jsonify({"success": True})
+
+    return jsonify({"success": False, "error": "Complaint not found"}), 404

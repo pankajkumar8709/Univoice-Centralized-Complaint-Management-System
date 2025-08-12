@@ -166,6 +166,8 @@
             <p>Enter your credentials to access the teacher portal</p>
         </div>
         
+{% include 'flash.html' %}
+
         <form class="login-form" action="/teacher_login" method="POST">
             <div class="form-group">
                 <label for="employee_id">Employee ID</label>
