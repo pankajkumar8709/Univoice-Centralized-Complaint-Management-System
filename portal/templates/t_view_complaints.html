@@ -2,142 +2,783 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>View Registered Complaints</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Management System | Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* Same CSS as before, you can keep all styling */
-    body { font-family: 'Poppins', sans-serif; margin: 0; background-color: #f8f9fa; color: #333; }
-    .navbar { background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    .navbar .btn-group { display: flex; gap: 10px; }
-    .navbar a button { background: rgba(255,255,255,0.15); color: white; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 500; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
-    .navbar a button:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
-    .container { max-width: 1200px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); display: none; }
-    h2 { text-align: center; color: #3a0ca3; margin-bottom: 1.5rem; font-size: 1.8rem; position: relative; }
-    h2::after { content: ''; display: block; width: 80px; height: 4px; background: linear-gradient(to right, #4361ee, #f72585); margin: 10px auto; border-radius: 2px; }
-    .view-buttons { display: flex; justify-content: center; gap: 20px; margin: 2rem auto; max-width: 1200px; flex-wrap: wrap; }
-    .view-btn { padding: 18px 30px; font-size: 1.1rem; font-weight: 600; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    .view-btn i { font-size: 1.3rem; }
-    .view-btn.complaints { background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; }
-    .view-btn.suggestions { background: linear-gradient(135deg, #7209b7 0%, #560bad 100%); color: white; }
-    .view-btn.anonymous { background: linear-gradient(135deg, #f72585 0%, #b5179e 100%); color: white; }
-    .view-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
-    table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
-    th, td { padding: 15px; text-align: left; border-bottom: 1px solid #f0f0f0; }
-    th { background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%); color: white; font-weight: 500; }
-    tr:nth-child(even) { background-color: #f9f9f9; }
-    tr:hover { background-color: #f1f5fe; }
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a0ca3;
+      --secondary: #7209b7;
+      --accent: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+      --success: #4cc9f0;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7ff;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    
+    /* Header/Navbar */
+    .navbar {
+      background: white;
+      color: var(--dark);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .navbar-brand i {
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+    
+    .navbar-brand h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      font-size: 0.9rem;
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+    
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+    
+    /* Main Content */
+    .main-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .header h2 {
+      font-size: 1.8rem;
+      color: var(--dark);
+      font-weight: 600;
+    }
+    
+    .header .stats {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 15px 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 180px;
+    }
+    
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    
+    .stat-info h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .stat-info p {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+    
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 15px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      border-bottom: 3px solid transparent;
+      font-weight: 500;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom: 3px solid var(--primary);
+      background: rgba(67, 97, 238, 0.05);
+    }
+    
+    .tab-btn:hover:not(.active) {
+      background: var(--light-gray);
+    }
+    
+    /* Content Cards */
+    .content-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: none;
+    }
+    
+    .content-card.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card-header h3 {
+      font-size: 1.3rem;
+      color: var(--dark);
+    }
+    
+    .search-filter {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .search-box {
+      position: relative;
+    }
+    
+    .search-box input {
+      padding: 10px 15px 10px 40px;
+      border: 1px solid var(--light-gray);
+      border-radius: 30px;
+      width: 250px;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+    }
+    
+    .filter-btn {
+      background: white;
+      border: 1px solid var(--light-gray);
+      border-radius: 30px;
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    
+    /* Table Styles */
+    .table-responsive {
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--light-gray);
+    }
+    
+    th {
+      background: var(--light);
+      color: var(--dark);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+    }
+    
+    tr:hover {
+      background: rgba(67, 97, 238, 0.03);
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-resolved {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .status-in-progress {
+      background: #cce5ff;
+      color: #004085;
+    }
+    
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray);
+      transition: var(--transition);
+      padding: 5px;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .action-btn:hover {
+      background: var(--light-gray);
+      color: var(--primary);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--gray);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--light-gray);
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .header .stats {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+    
     @media (max-width: 768px) {
-      .container { padding: 1.5rem; margin: 1rem; }
-      .view-btn { padding: 15px 20px; font-size: 1rem; }
-      th, td { padding: 12px 10px; }
+      .navbar {
+        padding: 1rem;
+      }
+      
+      .main-container {
+        padding: 0 1rem;
+      }
+      
+      .stat-card {
+        min-width: auto;
+        flex: 1;
+      }
+      
+      .tab-nav {
+        flex-wrap: wrap;
+      }
+      
+      .tab-btn {
+        flex: 1 0 50%;
+        padding: 12px;
+        font-size: 0.9rem;
+      }
+      
+      .card-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      
+      .search-filter {
+        width: 100%;
+      }
+      
+      .search-box input {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .btn-group {
+        gap: 8px;
+      }
+      
+      .btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+      }
+      
+      .stat-card {
+        padding: 10px;
+      }
+      
+      .stat-icon {
+        display: none;
+      }
+      
+      .tab-btn {
+        flex: 1 0 100%;
+      }
+    }
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a0ca3;
+      --secondary: #7209b7;
+      --accent: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+      --success: #4cc9f0;
+      --border-radius: 12px;
+      --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7ff;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    
+    /* Header/Navbar */
+    .navbar {
+      background: white;
+      color: var(--dark);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      font-size: 0.9rem;
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+    
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
     }
   </style>
 </head>
 <body>
 
-<div class="navbar">
-  <div class="btn-group">
-    <a href="{{ url_for('t_interface') }}"><button><i class="fas fa-arrow-left"></i> Back to Dashboard</button></a>
-    <a href="{{ url_for('t_view_page') }}"><button><i class="fas fa-sync-alt"></i> Refresh</button></a>
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <div>
+    <a href="{{ url_for('t_interface') }}" class="btn btn-outline">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
   </div>
-  <a href="/logout"><button><i class="fas fa-sign-out-alt"></i> Logout</button></a>
-</div>
+</nav>
 
-<!-- Big View Buttons -->
-<div class="view-buttons">
-  <button class="view-btn complaints" onclick="showSection('complaints')"><i class="fas fa-exclamation-circle"></i> View Complaints</button>
-  <button class="view-btn suggestions" onclick="showSection('suggestions')"><i class="fas fa-lightbulb"></i> View Suggestions</button>
-  <button class="view-btn anonymous" onclick="showSection('anonymous')"><i class="fas fa-user-secret"></i> View Anonymous</button>
-</div>
-
-<!-- Complaints Section -->
-<div class="container" id="complaints-container">
-  <h2>Registered Complaints</h2>
-  <table>
-    <thead>
-      <tr><th>#</th><th>Title</th><th>Description</th><th>Category</th><th>Date</th><th>Others</th></tr>
-    </thead>
-    <tbody>
-      {% if complaints %}
-        {% for c in complaints %}
-        <tr>
-          <td>{{ c.id }}</td>
-          <td>{{ c.title }}</td>
-          <td>{{ c.complaint }}</td>
-          <td>{{ c.category }}</td>
-          <td>{{ c.date }}</td>
-          <td>{{ c.others }}</td>
-        </tr>
-        {% endfor %}
-      {% else %}
-        <tr><td colspan="6" style="text-align: center;">No complaints registered.</td></tr>
-      {% endif %}
-    </tbody>
-  </table>
-</div>
-
-<!-- Suggestions Section -->
-<div class="container" id="suggestions-container">
-  <h2>Registered Suggestions</h2>
-  <table>
-    <thead>
-      <tr><th>#</th><th>Title</th><th>Category</th><th>Description</th><th>Date</th></tr>
-    </thead>
-    <tbody>
-      {% if suggestion %}
-        {% for s in suggestion %}
-        <tr>
-          <td>{{ s.id }}</td>
-          <td>{{ s.title }}</td>
-          <td>{{ s.category }}</td>
-          <td>{{ s.complaint }}</td>
-          <td>{{ s.date }}</td>
-        </tr>
-        {% endfor %}
-      {% else %}
-        <tr><td colspan="5" style="text-align: center;">No suggestions registered.</td></tr>
-      {% endif %}
-    </tbody>
-  </table>
-</div>
-
-<!-- Anonymous Section -->
-<div class="container" id="anonymous-container">
-  <h2>Registered Anonymous Complaints</h2>
-  <table>
-    <thead>
-      <tr><th>#</th><th>Title</th><th>Category</th><th>Description</th></tr>
-    </thead>
-    <tbody>
-      {% if anonymous %}
-        {% for a in anonymous %}
-        <tr>
-          <td>{{ a.id }}</td>
-          <td>{{ a.title }}</td>
-          <td>{{ a.category }}</td>
-          <td>{{ a.complaint }}</td>
-        </tr>
-        {% endfor %}
-      {% else %}
-        <tr><td colspan="4" style="text-align: center;">No anonymous complaints registered.</td></tr>
-      {% endif %}
-    </tbody>
-  </table>
+{% include 'flash.html' %}
+<!-- Main Content -->
+<div class="main-container">
+  <!-- Page Header -->
+  <div class="header">
+    <h2>Complaint Management</h2>
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(67, 97, 238, 0.1); color: var(--primary);">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ complaints|length if complaints else 0 }}</h3>
+          <p>Complaints</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(114, 9, 183, 0.1); color: var(--secondary);">
+          <i class="fas fa-lightbulb"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ suggestion|length if suggestion else 0 }}</h3>
+          <p>Suggestions</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(247, 37, 133, 0.1); color: var(--accent);">
+          <i class="fas fa-user-secret"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ anonymous|length if anonymous else 0 }}</h3>
+          <p>Anonymous</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tab Navigation -->
+  <div class="tab-nav">
+    <div class="tab-btn active" onclick="showSection('complaints')">
+      <i class="fas fa-exclamation-circle"></i> Complaints
+    </div>
+    <div class="tab-btn" onclick="showSection('suggestions')">
+      <i class="fas fa-lightbulb"></i> Suggestions
+    </div>
+    <div class="tab-btn" onclick="showSection('anonymous')">
+      <i class="fas fa-user-secret"></i> Anonymous
+    </div>
+  </div>
+  
+  <!-- Complaints Section -->
+  <div class="content-card active" id="complaints-container">
+    <div class="card-header">
+      <h3>All Complaints</h3>
+      <div class="search-filter">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search complaints...">
+        </div>
+        <button class="filter-btn">
+          <i class="fas fa-filter"></i> Filter
+        </button>
+      </div>
+    </div>
+    
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if complaints %}
+            {% for c in complaints %}
+            <tr>
+              <td>#{{ c.id }}</td>
+              <td>{{ c.title }}</td>
+              <td>{{ c.complaint|truncate(50) }}</td>
+              <td>{{ c.category }}</td>
+              <td>{{ c.date }}</td>
+              <td><span class="status-badge status-pending">Pending</span></td>
+              <td>
+                <button class="action-btn" title="View details">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn" title="Mark as resolved">
+                  <i class="fas fa-check"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="7">
+                <div class="empty-state">
+                  <i class="fas fa-inbox"></i>
+                  <h3>No complaints found</h3>
+                  <p>There are currently no registered complaints</p>
+                </div>
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Suggestions Section -->
+  <div class="content-card" id="suggestions-container">
+    <div class="card-header">
+      <h3>All Suggestions</h3>
+      <div class="search-filter">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search suggestions...">
+        </div>
+        <button class="filter-btn">
+          <i class="fas fa-filter"></i> Filter
+        </button>
+      </div>
+    </div>
+    
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if suggestion %}
+            {% for s in suggestion %}
+            <tr>
+              <td>#{{ s.id }}</td>
+              <td>{{ s.title }}</td>
+              <td>{{ s.category }}</td>
+              <td>{{ s.complaint|truncate(50) }}</td>
+              <td>{{ s.date }}</td>
+              <td>
+                <button class="action-btn" title="View details">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6">
+                <div class="empty-state">
+                  <i class="fas fa-lightbulb"></i>
+                  <h3>No suggestions found</h3>
+                  <p>There are currently no registered suggestions</p>
+                </div>
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Anonymous Section -->
+  <div class="content-card" id="anonymous-container">
+    <div class="card-header">
+      <h3>Anonymous Complaints</h3>
+      <div class="search-filter">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search anonymous...">
+        </div>
+        <button class="filter-btn">
+          <i class="fas fa-filter"></i> Filter
+        </button>
+      </div>
+    </div>
+    
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if anonymous %}
+            {% for a in anonymous %}
+            <tr>
+              <td>#{{ a.id }}</td>
+              <td>{{ a.title }}</td>
+              <td>{{ a.category }}</td>
+              <td>{{ a.complaint|truncate(50) }}</td>
+              <td>
+                <button class="action-btn" title="View details">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <i class="fas fa-user-secret"></i>
+                  <h3>No anonymous complaints</h3>
+                  <p>There are currently no anonymous complaints</p>
+                </div>
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <script>
   function showSection(sectionType) {
-    document.querySelectorAll('.container').forEach(container => {
-      container.style.display = 'none';
+    // Hide all content cards
+    document.querySelectorAll('.content-card').forEach(card => {
+      card.classList.remove('active');
     });
+    
+    // Deactivate all tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    // Show selected section
     const container = document.getElementById(`${sectionType}-container`);
     if (container) {
-      container.style.display = 'block';
-      container.scrollIntoView({ behavior: 'smooth' });
+      container.classList.add('active');
+      
+      // Activate corresponding tab button
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.textContent.includes(sectionType.charAt(0).toUpperCase() + sectionType.slice(1))) {
+          btn.classList.add('active');
+        }
+      });
+      
+      // Smooth scroll to top of section
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
+  // Initialize with complaints section visible
   window.onload = function() {
     showSection('complaints');
   };

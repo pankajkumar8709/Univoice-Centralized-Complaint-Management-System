@@ -39,13 +39,30 @@ cursor.execute('''
 # Sample student data
 students = [
     ('24CSE394', '24CSE394', 'Pankaj Kumar Mahto', 'BTech CSE', '3rd', 'F'),
-    ('24CSE428', '24CSE428', 'Kanak Shahgal', 'BTech CSE', '3rd', 'E')
+    ('24CSE434', '24CSE434', 'Kanak Shahgal', 'BTech CSE', '3rd', 'E'),
+    ('24CSE428', '24CSE428', 'Mirtunjay Kumar Verma', 'BTech CSE', '3rd', 'F'),
+    ('24CSE397', '24CSE397', 'Soumya Ranjan Rout', 'BTech CSE', '3rd', 'F'),
+    ('24CSE419', '24CSE419', 'Rohit Ohdar', 'BTech CSE', '3rd', 'E'),
+    ('24CSE400', '24CSE400', 'Subha Rout', 'BTech CSE', '3rd', 'F'),
+    ('24CSE385', '24CSE385', 'Ashwin Panigrahy', 'BTech CSE', '3rd', 'F'),
+    ('24CSE4391', '24CSE391', 'Debasis Behera', 'BTech CSE', '3rd', 'F'),
+    ('24CSE406', '24CSE406', 'Sandeep Khatai', 'BTech CSE', '3rd', 'F'),
+    ('24CSE413', '24CSE413', 'Suman Kumar', 'BTech CSE', '3rd', 'F'),
+    ('24CSE424', '24CSE424', 'Aman Kumar', 'BTech CSE', '3rd', 'F')
 ]
 
 # Sample teacher data
 teachers = [
     ('EC001', 'EC001', 'Arpan Singh', 'CSE'),
-    ('EC002', 'EC002', 'GVS Narayan', 'CSE')
+    ('EC002', 'EC002', 'GVS Narayan', 'CSE'),
+    ('EC003', 'EC003', 'Agni Tanmayee', 'CSE'),
+    ('EC004', 'EC004', 'Himanshu barik', 'CSE'),
+    ('EC005', 'EC005', 'Shibo Patro', 'CSE'),
+    ('EC006', 'EC006', 'Hare Krishna', 'CSE'),
+    ('EC007', 'EC007', 'Ravi Kumar', 'CSE'),
+    ('EC008', 'EC008', 'Jayanti Dang', 'ECE'),
+    ('EC009', 'EC009', 'Sujit Kumar Patro', 'ECE'),
+    ('EC010', 'EC010', 'Furi Fiza', 'BSH')
 ]
 
 # Sample admin data

@@ -3,123 +3,358 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Complaints - Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Academic Complaints Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        .status-badge { padding: 5px 10px; border-radius: 5px; color: white; font-size: 0.9em; }
-        .status-pending { background: orange; }
-        .status-in-progress { background: blue; }
-        .status-resolved { background: green; }
-        .status-rejected { background: red; }
-        .action-btn { background: #007bff; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
-        .action-btn i { margin-right: 5px; }
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --radius: 8px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-in-progress { background: #cce5ff; color: #004085; }
+        .status-resolved { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            font-family: inherit;
+        }
+        
+        .error-message {
+            color: var(--danger);
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-logout-large {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 15px 30px;  /* Increased padding */
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;    /* Bolder text */
+    font-size: 1.1rem;   /* Larger text */
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;          /* More space between icon and text */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+    margin: 10px;       /* Added margin */
+    min-width: 150px;   /* Minimum width */
+    justify-content: center; /* Center content */
+}
 
-        /* Modal Styling */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-                 background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 400px; position: relative; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; }
-        .form-group { margin-bottom: 15px; }
-        label { font-weight: bold; display: block; margin-bottom: 5px; }
-        select, textarea, input[type="date"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        .save-btn { background: green; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
+.btn-logout-large:hover {
+    background-color: #c0392b;
+    transform: translateY(-3px); /* More pronounced hover effect */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.logout-link-large {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: inherit; /* Inherit button font size */
+    width: 100%;       /* Full button width */
+    justify-content: center;
+}
+
+/* Animation for extra emphasis */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.btn-logout-large:hover {
+    animation: pulse 1.5s infinite;
+}
+        
     </style>
 </head>
 <body>
-
-    <h2>Academic Complaints - Admin Dashboard</h2>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Complaint</th>
-                    <th>Semester</th>
-                    <th>Course</th>
-                    <th>Section</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Response</th>
-                    <th>Resolved On</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if complaints %}
-                {% for c in complaints %}
-                <tr data-id="{{ c.id }}" data-status="{{ c.status|default('Pending') }}" 
-                    data-semester="{{ c.semester }}" data-course="{{ c.course }}">
-                    <td>#{{ c.id }}</td>
-                    <td>{{ c.complaint|truncate(50, true, '...') }}</td>
-                    <td>{{ c.semester }}</td>
-                    <td>{{ c.course }}</td>
-                    <td>{{ c.section }}</td>
-                    <td>{{ c.date.strftime('%Y-%m-%d') if c.date else '-' }}</td>
-                    <td>
-                        <span class="status-badge status-{{ c.status|default('Pending')|lower|replace(' ', '-') }}">
-                            {{ c.status|default('Pending') }}
-                        </span>
-                    </td>
-                    <td>{{ c.response|truncate(30, true, '...') if c.response else 'No response' }}</td>
-                    <td>{{ c.date_resolved.strftime('%Y-%m-%d') if c.date_resolved else '-' }}</td>
-                    <td>
-                        <button class="action-btn view-btn" data-id="{{ c.id }}">
-                            <i class="fas fa-edit"></i> Manage
-                        </button>
-                    </td>
-                </tr>
-                {% endfor %}
-                {% else %}
-                <tr>
-                    <td colspan="10" style="text-align: center; padding: 30px;">
-                        <i class="fas fa-inbox" style="font-size: 2rem; color: #adb5bd; margin-bottom: 10px; display: block;"></i>
-                        No academic complaints found
-                    </td>
-                </tr>
-                {% endif %}
-            </tbody>
-        </table>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1><i class="fas fa-graduation-cap"></i> Academic Complaints</h1>
+                <p>Management Dashboard</p>
+            </div>
+            <button class="btn btn-logout-large">
+    <a href="/logout" class="logout-link-large">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+</button>
+        </div>
+        
+        <div class="welcome-card">
+            <h2>Welcome, Dr. {{ name }}!</h2>
+            <p>You have <strong>{{ complaint_count }}</strong> complaints to review</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-clock fa-2x"></i>
+            
+                <p>Pending</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-spinner fa-2x"></i>
+                
+                <p>In Progress</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle fa-2x"></i>
+             
+                <p>Resolved</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-times-circle fa-2x"></i>
+             
+                <p>Rejected</p>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Complaint</th>
+                        <th>Course</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for complaint in complaints %}
+                    <tr data-id="{{ complaint.id }}" data-status="{{ complaint.status }}">
+                        <td>#{{ complaint.id }}</td>
+                        <td>
+                            <strong>{{ complaint.complaint|truncate(50) }}</strong>
+                            {% if complaint.response %}
+                            <div class="text-muted">{{ complaint.response|truncate(30) }}</div>
+                            {% endif %}
+                        </td>
+                        <td>{{ complaint.course }}</td>
+                        <td>
+                            <span class="status status-{{ complaint.status|lower|replace(' ', '-') }}">
+                                {{ complaint.status }}
+                            </span>
+                        </td>
+                        <td>{{ complaint.date.strftime('%d %b %Y') }}</td>
+                        <td>
+                            <button class="btn btn-primary manage-btn" data-id="{{ complaint.id }}">
+                                <i class="fas fa-edit"></i> Manage
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Complaint Detail Modal -->
-    <div class="modal" id="complaint-modal">
+    <!-- Complaint Management Modal -->
+    <div class="modal" id="complaintModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Manage Complaint</h3>
+                <h3>Manage Complaint #<span id="modalComplaintId"></span></h3>
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="complaint-form" action="/update-acad-complaint" method="POST">
-                    <input type="hidden" id="complaint-id" name="id">
-
+                <div id="errorDisplay" class="error-message" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorText"></span>
+                </div>
+                
+                <form id="complaintForm">
+                    <input type="hidden" id="complaintId">
+                    
                     <div class="form-group">
-                        <label for="status">Status:</label>
-                        <select id="status" name="status" required>
+                        <label>Complaint Details</label>
+                        <div class="form-control" id="complaintDetails" style="background: #f8f9fa; min-height: 50px;"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" class="form-control" required>
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Resolved">Resolved</option>
                             <option value="Rejected">Rejected</option>
                         </select>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="response">Response:</label>
-                        <textarea id="response" name="response" placeholder="Write your response here..." rows="3"></textarea>
+                        <label for="response">Official Response</label>
+                        <textarea id="response" class="form-control" rows="4"></textarea>
                     </div>
-
+                    
                     <div class="form-group">
-                        <label for="date_resolved">Date Resolved:</label>
-                        <input type="date" id="date_resolved" name="date_resolved">
+                        <label for="dateResolved">Resolution Date</label>
+                        <input type="date" id="dateResolved" class="form-control">
                     </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="save-btn">Save Changes</button>
+                    
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" class="btn close-btn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
                     </div>
                 </form>
             </div>
@@ -127,55 +362,103 @@
     </div>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const modal = document.getElementById("complaint-modal");
-        const closeBtn = document.querySelector(".close-btn");
-        const form = document.getElementById("complaint-form");
-
-        // Open modal on "Manage" click
-        document.querySelectorAll(".view-btn").forEach(button => {
-            button.addEventListener("click", function () {
-                const row = this.closest("tr");
-                document.getElementById("complaint-id").value = row.dataset.id;
-                document.getElementById("status").value = row.dataset.status || "Pending";
-                document.getElementById("response").value = row.querySelector("td:nth-child(8)").innerText.trim() !== "No response"
-                    ? row.querySelector("td:nth-child(8)").innerText.trim()
-                    : "";
-                document.getElementById("date_resolved").value = row.querySelector("td:nth-child(9)").innerText.trim() !== "-"
-                    ? row.querySelector("td:nth-child(9)").innerText.trim()
-                    : "";
-
-                modal.style.display = "flex";
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('complaintModal');
+        const complaintForm = document.getElementById('complaintForm');
+        const statusSelect = document.getElementById('status');
+        const dateResolved = document.getElementById('dateResolved');
+        const errorDisplay = document.getElementById('errorDisplay');
+        const errorText = document.getElementById('errorText');
+        
+        // Auto-set resolution date when status changes to Resolved
+        statusSelect.addEventListener('change', function() {
+            if (this.value === 'Resolved' && !dateResolved.value) {
+                dateResolved.value = new Date().toISOString().split('T')[0];
+            } else if (this.value !== 'Resolved') {
+                dateResolved.value = '';
+            }
+        });
+        
+        // Open modal when Manage button is clicked
+        document.querySelectorAll('.manage-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const row = this.closest('tr');
+                const complaintId = row.dataset.id;
+                const complaintDetails = row.querySelector('td:nth-child(2) strong').textContent;
+                const currentStatus = row.dataset.status;
+                const currentResponse = row.querySelector('td:nth-child(2) .text-muted')?.textContent || '';
+                
+                // Populate modal fields
+                document.getElementById('modalComplaintId').textContent = complaintId;
+                document.getElementById('complaintId').value = complaintId;
+                document.getElementById('complaintDetails').textContent = complaintDetails;
+                statusSelect.value = currentStatus;
+                document.getElementById('response').value = currentResponse.trim();
+                
+                // Clear any previous errors
+                errorDisplay.style.display = 'none';
+                
+                // Show modal
+                modal.style.display = 'flex';
             });
         });
-
+        
         // Close modal
-        closeBtn.addEventListener("click", () => modal.style.display = "none");
-        window.addEventListener("click", (e) => {
-            if (e.target === modal) modal.style.display = "none";
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
         });
-
-        // Save changes via AJAX
-        form.addEventListener("submit", function (e) {
+        
+        // Handle form submission
+        complaintForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const formData = new FormData(this);
+            const formData = {
+                id: document.getElementById('complaintId').value,
+                status: statusSelect.value,
+                response: document.getElementById('response').value,
+                date_resolved: dateResolved.value || null
+            };
             
-            fetch("/update-complaint", {
-                method: "POST",
-                body: formData
-            }).then(res => res.json())
-              .then(data => {
-                  if (data.success) {
-                      alert("Complaint updated successfully!");
-                      location.reload();
-                  } else {
-                      alert("Error updating complaint.");
-                  }
-              });
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/update-acad-complaint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Server returned an error');
+                }
+                
+                if (data.success) {
+                    // Show success and reload
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    throw new Error(data.message || 'Failed to update complaint');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorText.textContent = error.message;
+                errorDisplay.style.display = 'flex';
+                submitBtn.innerHTML = originalBtnHtml;
+                submitBtn.disabled = false;
+            }
         });
     });
     </script>
-
 </body>
 </html>

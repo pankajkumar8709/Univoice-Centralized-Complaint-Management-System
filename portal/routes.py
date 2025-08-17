@@ -65,10 +65,18 @@ def logout():
 
 @app.route('/academics',methods=['GET','POST'])
 def acad_page():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     return render_template('acad.html')
 
 @app.route('/submit_academic_complaint',methods=['GET','POST'])
 def a_add():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     if request.method=='POST':
         complaint=request.form['complaint']
         semester=request.form['semester']
@@ -81,18 +89,26 @@ def a_add():
 
 
 
-        a1=acad(complaint=complaint,semester=semester,course=course,section=section,date=date_obj)
+        a1=acad(name=session['name'],complaint=complaint,semester=semester,course=course,section=section,date=date_obj)
 
         db.session.add(a1)
         db.session.commit()
         flash("Form submitted succesfully",category='success')
-        return redirect(url_for('acad_page'))
+        return redirect(url_for('s_interface'))
 
 @app.route('/hostel',methods=['GET','POST'])
 def hostel_page():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     return render_template('hostel.html')
 @app.route('/submit_hostel_complaint',methods=['POST'])
 def h_add():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     complaint=request.form['complaint']
     h_no=request.form['hostel']
     r_no=request.form['room']
@@ -100,18 +116,26 @@ def h_add():
 
     date_obj = datetime.strptime(date, '%Y-%m-%d').date()
 
-    h1=hostel(complaint=complaint,hostel_no=h_no,room_no=r_no,date=date_obj)
+    h1=hostel(name=session['name'],complaint=complaint,hostel_no=h_no,room_no=r_no,date=date_obj)
     db.session.add(h1)
     db.session.commit()
     flash("Form Submitted successfully",category='success')
-    return redirect(url_for('hostel_page'))
+    return redirect(url_for('s_interface'))
 
 @app.route('/mess',methods=['GET','POST'])
 def mess_page():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     return render_template('mess.html')
 
 @app.route('/submit_mess_complaint',methods=['POST'])
 def m_add():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     complaint=request.form['complaint']
     day=request.form['day']
     meal=request.form['meal']
@@ -121,110 +145,168 @@ def m_add():
 
 
 
-    m1=mess(complaint=complaint,day=day,meal=meal,date=date_obj)
+    m1=mess(name=session['name'],complaint=complaint,day=day,meal=meal,date=date_obj)
     db.session.add(m1)
     db.session.commit()
 
     flash("Form Submitted successfully",category='success')
-    return redirect(url_for('mess_page'))
+    return redirect(url_for('s_interface'))
 
 @app.route('/sports',methods=['GET','POST'])
 def sports_page():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     return render_template('sports.html')
 
 @app.route('/submit_sports_complaint',methods=['POST'])
 def sp_add():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     complaint=request.form['complaint']
     t_sport=request.form['sport']
     date=request.form['date']
 
     date_obj = datetime.strptime(date, '%Y-%m-%d').date()
 
-    sp1=sports(complaint=complaint,type=t_sport,date=date_obj)
+    sp1=sports(name=session['name'],complaint=complaint,type=t_sport,date=date_obj)
     db.session.add(sp1)
     db.session.commit()
     flash("form submitted successfully",category='success')
-    return redirect(url_for('sports_page'))
+    return redirect(url_for('s_interface'))
 
 @app.route('/buses',methods=['GET','POST'])
 def buses_page():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     return render_template('buses.html')
 
 @app.route('/submit_bus_complaint',methods=['POST'])
 def b_add():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     complaint=request.form['complaint']
     b_no=request.form['bus']
     date=request.form['date']
     date_obj = datetime.strptime(date, '%Y-%m-%d').date()
 
-    b1=buses(complaint=complaint,bus_no=b_no,date=date_obj)
+    b1=buses(name=session['name'],complaint=complaint,bus_no=b_no,date=date_obj)
     db.session.add(b1)
     db.session.commit()
     flash("form submitted successfully",category='success')
-    return redirect(url_for('buses_page'))
+    return redirect(url_for('s_interface'))
 
 @app.route('/basics',methods=['GET','POST'])
 def basics_page():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     return render_template('basics.html')
 
 @app.route('/submit_amenities_complaint',methods=['POST'])
 def bs_add():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     complaint=request.form['complaint']
     category=request.form['category']
     date=request.form['date']
     date_obj = datetime.strptime(date, '%Y-%m-%d').date()
 
-    ba1=basic(complaint=complaint,category=category,date=date_obj)
+    ba1=basic(name=session['name'],complaint=complaint,category=category,date=date_obj)
     db.session.add(ba1)
     db.session.commit()
     flash("form submitted successfully",category='success')
-    return redirect(url_for('basics_page'))
+    return redirect(url_for('s_interface'))
 
 @app.route('/anonymous',methods=['GET','POST'])
 def anonymous_page():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     return render_template('anonymous.html')
 
 @app.route('/submit_anonymous_complaint',methods=['POST'])
 def an_add():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     complaint=request.form['complaint']
     category=request.form['category']
     date=request.form['date']
     date_obj = datetime.strptime(date, '%Y-%m-%d').date()
 
-    an1=s_anonymous(complaint=complaint,category=category,date=date_obj)
+    an1=s_anonymous(name=session['name'],complaint=complaint,category=category,date=date_obj)
     db.session.add(an1)
     db.session.commit()
     flash("form submitted successfully",category='success')
-    return redirect(url_for('basics_page'))
+    return redirect(url_for('s_interface'))
 
 @app.route('/suggest',methods=['GET','POST'])
 def suggestion_page():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     return render_template('suggestion.html') 
 
 @app.route('/submit_suggestion',methods=['POST'])
 def sg_add():
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
     suggestion=request.form['suggestion']
     date=request.form['date']
     date_obj = datetime.strptime(date, '%Y-%m-%d').date()
 
-    sg1=s_suggest(suggestion=suggestion,date=date_obj)
+    sg1=s_suggest(name=session['name'],suggestion=suggestion,date=date_obj)
     db.session.add(sg1)
     db.session.commit()
     flash("form submitted successfully",category='success')
-    return redirect(url_for('suggestion_page'))
+    return redirect(url_for('s_interface'))
 
 @app.route('/view_complaints')
 def view_complaint():
-    complaints=acad.query.all()
-    hostels=hostel.query.all()
-    mes=mess.query.all()
-    sp=sports.query.all()
-    bs=buses.query.all()
-    sg=s_suggest.query.all()
-    an=s_anonymous.query.all()
-    bas=basic.query.all()
+    user_id = session.get('name')
+    if not user_id:
+        flash("You must log in first!", 401)
+        return redirect(url_for('s_login'))
+    # Fetch all complaints related to the user
 
-    return render_template('s_complaints.html',complaints=complaints,hostels=hostels,mes=mes,sp=sp,bs=bs,sg=sg,an=an,bas=bas)
+    complaints = acad.query.filter_by(name=user_id).all()
+    hostels = hostel.query.filter_by(name=user_id).all()
+    mes = mess.query.filter_by(name=user_id).all()
+    sp = sports.query.filter_by(name=user_id).all()
+    bs = buses.query.filter_by(name=user_id).all()
+    sg = s_suggest.query.filter_by(name=user_id).all()
+    an = s_anonymous.query.filter_by(name=user_id).all()
+    bas = basic.query.filter_by(name=user_id).all()
+
+    return render_template(
+        's_complaints.html',
+        complaints=complaints,
+        hostels=hostels,
+        mes=mes,
+        sp=sp,
+        bs=bs,
+        sg=sg,
+        an=an,
+        bas=bas
+    )
+
+
 
 
 
@@ -245,7 +327,8 @@ def t_login():
 
                 if password == db_password:
                     session['user'] = name
-                    return render_template('t_interface.html')
+                    flash("Login successful", category='success')
+                    return redirect(url_for('t_interface'))
                 else:
                     flash("Invalid password")
             else:
@@ -253,27 +336,45 @@ def t_login():
 
     return render_template('t_login.html')
 
-@app.route('/t_interface',methods=['GET','POST'])
+@app.route('/t_interface')
 def t_interface():
     name=session.get('user')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('t_login'))
     return render_template('t_interface.html',name=name)
 
 @app.route('/t_complaint',methods=['GET','POST'])
 def t_complaint():
+    name=session.get('user')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('t_login'))
     return render_template('t_complaint.html')
 @app.route('/t_anonymous',methods=['GET','POST'])
 def t_anonymous():
+    name=session.get('user')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('t_login'))
     return render_template('t_anonymous.html')
 @app.route('/t_suggestion',methods=['GET','POST'])
 def t_suggestion():
+    name=session.get('user')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('t_login'))
     return render_template('t_suggest.html')
 @app.route('/t_view',methods=['GET','POST'])
 def t_view_page():
     
-
-    complaints=T_Complaints.query.all()
-    suggest=T_Suggestion.query.all()
-    anonymous=T_Anonymous.query.all()
+    name= session.get('user')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('t_login'))
+    complaints=T_Complaints.query.filter_by(name=name).all()
+    suggest=T_Suggestion.query.filter_by(name=name).all()
+    anonymous=T_Anonymous.query.filter_by(name=name).all()
 
 
     return render_template('t_view_complaints.html',complaints=complaints,suggestion=suggest,anonymous=anonymous)
@@ -282,6 +383,10 @@ def t_view_page():
 
 @app.route('/submit_teacher_complaint',methods=['POST'])
 def submit_t_complaints():
+    name=session.get('user')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('t_login'))
     title=request.form['title']
     desc=request.form['details']
     category=request.form['category']
@@ -289,38 +394,46 @@ def submit_t_complaints():
     others=request.form['others']
 
     date_obj=datetime.strptime(date,'%Y-%m-%d').date()
-    st1=T_Complaints(title=title,complaint=desc,category=category,date=date_obj,others=others)
+    st1=T_Complaints(name=session['user'],title=title,complaint=desc,category=category,date=date_obj,others=others)
     db.session.add(st1)
     db.session.commit()
 
     flash("Form Submitted Successfully",category='success')
-    return redirect(url_for('t_complaint'))
+    return redirect(url_for('t_interface'))
 
 @app.route('/submit_teacher_suggestion',methods=['POST'])
 def submit_t_suggest():
+    name=session.get('user')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('t_login'))
     title=request.form['title']
     category=request.form['category']
     desc=request.form['details']
     date=request.form['date']
 
     date_obj=datetime.strptime(date,'%Y-%m-%d').date()
-    st1=T_Suggestion(title=title,category=category,complaint=desc,date=date_obj)
+    st1=T_Suggestion(name=session['user'],title=title,category=category,complaint=desc,date=date_obj)
     db.session.add(st1)
     db.session.commit()
 
     flash("Form Submitted Successfully",category='success')
-    return redirect(url_for('t_suggestion'))
+    return redirect(url_for('t_interface'))
 
 @app.route('/submit_anonymous_teacher',methods=['POST'])
 def submit_t_anonymous():
+    name=session.get('user')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('t_login'))
     category=request.form['category']
     desc=request.form['details']
-    st1=T_Anonymous(category=category,complaint=desc)
+    st1=T_Anonymous(name=session['user'],category=category,complaint=desc)
     db.session.add(st1)
     db.session.commit()
 
     flash("Form Submitted Successfully",category='success')
-    return redirect(url_for('t_anonymous'))
+    return redirect(url_for('t_interface'))
 
 #admin login
 @app.route('/admin_login',methods=['GET','POST'])
@@ -339,7 +452,7 @@ def admin_login():
                 category=result[3]
 
                 if password==db_password:
-                    session['user']=name
+                    session['username']=name
                     session['category']=category
                     if category=='Hostel':
                         flash("✅ Login successful",category='success')
@@ -374,7 +487,10 @@ def admin_login():
 
 @app.route('/admin_a_complaints', methods=['GET', 'POST'])
 def admin_a_complaints():
-    name = session.get('user')
+    name = session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     category = session.get('category')
 
     if request.method == 'POST':
@@ -404,7 +520,10 @@ def admin_a_complaints():
 
 @app.route('/admin_h_complaints')
 def admin_h_complaints():
-    name = session.get('user')
+    name = session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -429,7 +548,10 @@ def admin_h_complaints():
 
 @app.route('/admin_m_complaints')
 def admin_m_complaints():
-    name = session.get('user')
+    name = session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -454,7 +576,10 @@ def admin_m_complaints():
 
 @app.route('/admin_sp_complaints')
 def admin_sp_complaints():
-    name = session.get('user')
+    name = session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -480,7 +605,10 @@ def admin_sp_complaints():
 
 @app.route('/admin_bas_complaints')
 def admin_bas_complaints():
-    name = session.get('user')
+    name = session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -506,7 +634,10 @@ def admin_bas_complaints():
 
 @app.route('/admin_bus_complaints')
 def admin_bus_complaints():
-    name = session.get('user')
+    name = session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -532,24 +663,33 @@ def admin_bus_complaints():
 
 @app.route('/off_view_complaints')
 def view_admin_complaint():
-    name = session.get('user')
+    name = session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     category=session.get('category')
     return render_template('ad_off_inter.html',name=name,category=category)
 
 @app.route('/view_teacher_complaints')
 def view_teacher_complaints():
-    name = session.get('user')
+    name = session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     category=session.get('category')
     complaints=T_Complaints.query.all()
     suggest=T_Suggestion.query.all()
     anonymous=T_Anonymous.query.all()
-    # Add your logic to show teacher complaints
     return render_template('ad_teachers_complaints.html',complaints=complaints,suggest=suggest,anonymous=anonymous,name=name,category=category)
 
 
 
 @app.route('/view_student_complaints')
 def view_student_complaints():
+    name= session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     complaints=acad.query.all()
     hostels=hostel.query.all()
     mes=mess.query.all()
@@ -558,14 +698,16 @@ def view_student_complaints():
     sg=s_suggest.query.all()
     an=s_anonymous.query.all()
     bas=basic.query.all()
-    # Add your logic to show student complaints
     return render_template('ad_students_complaints.html',complaints=complaints,hostels=hostels,mes=mes,sp=sp,bs=bs,sg=sg,an=an,bas=bas)
 
 
 
-    # new code to handle admin complaints for changing status and response js
 @app.route('/api/complaints/<int:complaint_id>')
 def get_complaint_details(complaint_id):
+    name= session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     # Fetch complaint from your database
     complaint = db.session.query(hostel).filter_by(id=complaint_id).first()
     
@@ -589,56 +731,137 @@ def get_complaint_details(complaint_id):
 
 @app.route("/update-acad-complaint", methods=["POST"])
 def update_complaint():
-    complaint_id = request.form.get("id")
-    status = request.form.get("status")
-    response = request.form.get("response")
-    date_resolved_str = request.form.get("date_resolved")  # string from form
+    name= session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "error": "No data provided"}), 400
+
+    complaint_id = data.get("id")
+    status = data.get("status")
+    response = data.get("response")
+    date_resolved_str = data.get("date_resolved")  
+
+    
+    if not all([complaint_id, status]):
+        return jsonify({"success": False, "error": "Missing required fields"}), 400
 
     complaint = acad.query.get(complaint_id)
-    if complaint:
+    if not complaint:
+        return jsonify({"success": False, "error": "Complaint not found"}), 404
+
+    try:
         complaint.status = status
         complaint.response = response
 
-        # Convert string to Python date object
-        if date_resolved_str:
+        if status.lower() == "resolved" and not date_resolved_str:
+            complaint.date_resolved = datetime.utcnow().date()
+        elif date_resolved_str:
             try:
                 complaint.date_resolved = datetime.strptime(date_resolved_str, "%Y-%m-%d").date()
             except ValueError:
-                return jsonify({"success": False, "error": "Invalid date format"}), 400
+                return jsonify({
+                    "success": False,
+                    "error": f"Invalid date format. Expected YYYY-MM-DD, got {date_resolved_str}"
+                }), 400
         else:
             complaint.date_resolved = None
 
         db.session.commit()
-        return jsonify({"success": True})
+        return jsonify({
+            "success": True,
+            "message": "Complaint updated successfully",
+            "data": {
+                "id": complaint.id,
+                "status": complaint.status,
+                "date_resolved": complaint.date_resolved.strftime("%Y-%m-%d") if complaint.date_resolved else None
+            }
+        })
 
-    return jsonify({"success": False, "error": "Complaint not found"}), 404
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            "success": False,
+            "error": str(e),
+            "message": "Failed to update complaint"
+        }), 500
 
-@app.route("/update-hostel-complaint", methods=["POST"])
-def update_hostel_complaint():  
-    complaint_id = request.form.get("id")
-    status = request.form.get("status")
-    response = request.form.get("response")
-    date_resolved_str = request.form.get("date_resolved")
-    complaint = hostel.query.get(complaint_id)
-    if complaint:
+@app.route('/update-hostel-complaint', methods=['POST'])
+def update_hostel_complaint():
+    name= session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
+    try:
+        # Get JSON data from request
+        data = request.get_json()
+        if not data:
+            return jsonify({
+                'success': False,
+                'error': 'No data received'
+            }), 400
+
+        # Validate required fields
+        complaint_id = data.get('id')
+        status = data.get('status')
+        
+        if not all([complaint_id, status]):
+            return jsonify({
+                'success': False,
+                'error': 'Missing required fields'
+            }), 400
+
+        
+        complaint = hostel.query.get(complaint_id)
+        if not complaint:
+            return jsonify({
+                'success': False,
+                'error': 'Complaint not found'
+            }), 404
+
+        # Update fields
         complaint.status = status
-        complaint.response = response
+        complaint.response = data.get('response', '').strip() or None
 
-        if date_resolved_str:
-            try:
-                complaint.date_resolved = datetime.strptime(date_resolved_str, "%Y-%m-%d").date()
-            except ValueError:
-                return jsonify({"success": False, "error": "Invalid date format"}), 400
+        # Handle date_resolved
+        if status == 'Resolved':
+            date_resolved = data.get('date_resolved')
+            if date_resolved:
+                try:
+                    complaint.date_resolved = datetime.strptime(date_resolved, '%Y-%m-%d').date()
+                except ValueError:
+                    return jsonify({
+                        'success': False,
+                        'error': 'Invalid date format (use YYYY-MM-DD)'
+                    }), 400
+            else:
+                complaint.date_resolved = datetime.utcnow().date()
         else:
             complaint.date_resolved = None
 
         db.session.commit()
-        return jsonify({"success": True})
-    
-    return jsonify({"success": False, "error": "Complaint not found"}), 404
+        
+        return jsonify({
+            'success': True,
+            'message': 'Complaint updated successfully'
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'An error occurred while updating the complaint'
+        }), 500
 
 @app.route('/update-basic-complaint', methods=['POST'])
 def update_basic_complaint():
+    name= session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     complaint_id = request.form.get("id")
     status = request.form.get("status")
     response = request.form.get("response")
@@ -664,6 +887,10 @@ def update_basic_complaint():
 
 @app.route('/update-mess-complaint', methods=['POST'])
 def update_mess_complaint():
+    name= session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     complaint_id = request.form.get("id")
     status = request.form.get("status")
     response = request.form.get("response")
@@ -688,6 +915,10 @@ def update_mess_complaint():
     return jsonify({"success": False, "error": "Complaint not found"}), 404
 @app.route('/update-sports-complaint', methods=['POST'])
 def update_sports_complaint():  
+    name= session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     complaint_id = request.form.get("id")
     status = request.form.get("status")
     response = request.form.get("response")
@@ -713,6 +944,10 @@ def update_sports_complaint():
 
 @app.route('/update-bus-complaint', methods=['POST'])
 def update_bus_complaint():
+    name= session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('admin_login'))
     complaint_id = request.form.get("id")
     status = request.form.get("status")
     response = request.form.get("response")

@@ -2,21 +2,8 @@
 {% block title %}
 Academic Page Admin
 {% endblock %}
-
+{% include 'flash.html' %}
 {% block body %}
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert"
-                 style="position: fixed; top: 20px; right: 20px; z-index: 1000; min-width: 300px;
-                        box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: none;">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-
 <style>
     #hostel-complaints-container {
         padding: 2rem;
