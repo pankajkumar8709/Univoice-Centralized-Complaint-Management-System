@@ -6,7 +6,7 @@ class acad(db.Model):
     complaint=db.Column(db.String(500),nullable=False)
     semester=db.Column(db.String(4),nullable=False)
     course=db.Column(db.String(15),nullable=False)
-    section=db.Column(db.String(3),nullable=False)
+    section=db.Column(db.String(3),nullable=True)
     date=db.Column(db.Date(),nullable=False)
     status = db.Column(db.String(20), default='Pending')
     response = db.Column(db.Text)
