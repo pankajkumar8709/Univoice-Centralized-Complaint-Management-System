@@ -11,37 +11,128 @@ from datetime import datetime
 def home():
     return render_template('home.html')
 
+# Unified Login Route
+@app.route('/login', methods=['GET', 'POST'])
+def unified_login():
+    if request.method == 'POST':
+        user_type = request.form.get('user_type')
+        password = request.form['password']
+        
+        if user_type == 'student':
+            roll = request.form.get('roll') or request.form.get('username')
+            with engine.connect() as conn:
+                query = select(students).where(students.c.roll_number == roll)
+                result = conn.execute(query).fetchone()
+                
+                if result:
+                    db_password = result[1]  # 2nd column = password
+                    name = result[2]         # 3rd column = name
+                    
+                    if password == db_password:
+                        session['name'] = name
+                        session['roll'] = roll
+                        flash("✅ Login successful", 'success')
+                        return redirect(url_for('s_interface'))
+                    else:
+                        flash("❌ Incorrect password", 'error')
+                else:
+                    flash("❌ Roll number not found", 'error')
+                    
+        elif user_type == 'teacher':
+            empid = request.form.get('empid') or request.form.get('username')
+            with engine.connect() as conn:
+                query = select(teachers).where(teachers.c.employee_id == empid)
+                result = conn.execute(query).fetchone()
+                
+                if result:
+                    db_password = result[1]  # 2nd column = password
+                    name = result[2]         # 3rd column = name
+                    
+                    if password == db_password:
+                        session['user'] = name
+                        flash("✅ Login successful", 'success')
+                        return redirect(url_for('t_interface'))
+                    else:
+                        flash("❌ Invalid password", 'error')
+                else:
+                    flash("❌ Employee ID not found", 'error')
+                    
+        elif user_type == 'admin':
+            userid = request.form.get('username')
+            with engine.connect() as conn:
+                query = select(admins).where(admins.c.admin_id == userid)
+                result = conn.execute(query).fetchone()
+                
+                if result:
+                    db_password = result[1]
+                    name = result[2]
+                    category = result[3]
+                    
+                    if password == db_password:
+                        session['username'] = name
+                        session['category'] = category
+                        
+                        if category == 'Hostel':
+                            flash("✅ Login successful", 'success')
+                            return redirect(url_for('admin_h_complaints'))
+                        elif category == 'Sports':
+                            flash("✅ Login successful", 'success')
+                            return redirect(url_for('admin_sp_complaints'))
+                        elif category == 'Bus':
+                            flash("✅ Login successful", 'success')
+                            return redirect(url_for('admin_bus_complaints'))
+                        elif category == 'Mess':
+                            flash("✅ Login successful", 'success')
+                            return redirect(url_for('admin_m_complaints'))
+                        elif category == 'Academics':
+                            flash("✅ Login successful", 'success')
+                            return redirect(url_for('admin_a_complaints'))
+                        elif category == 'Basic Amenities':
+                            flash("✅ Login successful", 'success')
+                            return redirect(url_for('admin_bas_complaints'))
+                        elif category == 'Officials':
+                            flash("✅ Login successful", 'success')
+                            return redirect(url_for('officials_unified_dashboard'))
+                        else:
+                            flash("❌ Unauthorized Access!", 'error')
+                    else:
+                        flash("❌ Invalid Password", 'error')
+                else:
+                    flash("❌ Admin ID not found!", 'error')
+    
+    return render_template('unified_login.html')
 
-@app.route('/index')
-def index():
-    return render_template('index.html')
+
+# @app.route('/index')
+# def index():
+#     return render_template('index.html')
 
 # Student login
-@app.route('/student_login', methods=['GET', 'POST'])
-def s_login():
-    if request.method == 'POST':
-        roll = request.form['roll']
-        password = request.form['password']
+# @app.route('/student_login', methods=['GET', 'POST'])
+# def s_login():
+#     if request.method == 'POST':
+#         roll = request.form['roll']
+#         password = request.form['password']
 
-        with engine.connect() as conn:
-            query = select(students).where(students.c.roll_number == roll)
-            result = conn.execute(query).fetchone()
+#         with engine.connect() as conn:
+#             query = select(students).where(students.c.roll_number == roll)
+#             result = conn.execute(query).fetchone()
 
-            if result:
-                db_password = result[1]  # 2nd column = password
-                name = result[2]         # 3rd column = name
+#             if result:
+#                 db_password = result[1]  # 2nd column = password
+#                 name = result[2]         # 3rd column = name
 
-                if password == db_password:
-                    session['name'] = name   # ✅ store in session['name']
-                    session['roll'] = roll   # optional
-                    flash("✅ Login successful")
-                    return redirect(url_for('s_interface'))  # redirect to interface
-                else:
-                    flash("❌ Incorrect password")
-            else:
-                flash("❌ Roll number not found")
+#                 if password == db_password:
+#                     session['name'] = name   # ✅ store in session['name']
+#                     session['roll'] = roll   # optional
+#                     flash("✅ Login successful")
+#                     return redirect(url_for('s_interface'))  # redirect to interface
+#                 else:
+#                     flash(" Incorrect password")
+#             else:
+#                 flash(" Roll number not found")
 
-    return render_template('s_login.html')
+#     return render_template('s_login.html')
 
 
 # Student interface/dashboard
@@ -50,7 +141,7 @@ def s_interface():
     name = session.get('name')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
 
     return render_template('s_interface.html', name=name)
 
@@ -60,7 +151,7 @@ def s_interface():
 def logout():
     session.clear()
     flash("You have been logged out.")
-    return redirect(url_for('index'))
+    return redirect(url_for('unified_login'))
 
 
 @app.route('/academics',methods=['GET','POST'])
@@ -68,7 +159,7 @@ def acad_page():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     return render_template('acad.html')
 
 @app.route('/submit_academic_complaint',methods=['GET','POST'])
@@ -76,7 +167,7 @@ def a_add():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     if request.method=='POST':
         complaint=request.form['complaint']
         semester=request.form['semester']
@@ -101,14 +192,14 @@ def hostel_page():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     return render_template('hostel.html')
 @app.route('/submit_hostel_complaint',methods=['POST'])
 def h_add():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     complaint=request.form['complaint']
     h_no=request.form['hostel']
     r_no=request.form['room']
@@ -127,7 +218,7 @@ def mess_page():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     return render_template('mess.html')
 
 @app.route('/submit_mess_complaint',methods=['POST'])
@@ -135,7 +226,7 @@ def m_add():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     complaint=request.form['complaint']
     day=request.form['day']
     meal=request.form['meal']
@@ -157,7 +248,7 @@ def sports_page():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     return render_template('sports.html')
 
 @app.route('/submit_sports_complaint',methods=['POST'])
@@ -165,7 +256,7 @@ def sp_add():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     complaint=request.form['complaint']
     t_sport=request.form['sport']
     date=request.form['date']
@@ -183,7 +274,7 @@ def buses_page():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     return render_template('buses.html')
 
 @app.route('/submit_bus_complaint',methods=['POST'])
@@ -191,7 +282,7 @@ def b_add():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     complaint=request.form['complaint']
     b_no=request.form['bus']
     date=request.form['date']
@@ -208,7 +299,7 @@ def basics_page():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     return render_template('basics.html')
 
 @app.route('/submit_amenities_complaint',methods=['POST'])
@@ -216,7 +307,7 @@ def bs_add():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     complaint=request.form['complaint']
     category=request.form['category']
     date=request.form['date']
@@ -233,7 +324,7 @@ def anonymous_page():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     return render_template('anonymous.html')
 
 @app.route('/submit_anonymous_complaint',methods=['POST'])
@@ -241,7 +332,7 @@ def an_add():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     complaint=request.form['complaint']
     category=request.form['category']
     date=request.form['date']
@@ -258,7 +349,7 @@ def suggestion_page():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     return render_template('suggestion.html') 
 
 @app.route('/submit_suggestion',methods=['POST'])
@@ -266,7 +357,7 @@ def sg_add():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     suggestion=request.form['suggestion']
     date=request.form['date']
     date_obj = datetime.strptime(date, '%Y-%m-%d').date()
@@ -282,7 +373,7 @@ def view_complaint():
     user_id = session.get('name')
     if not user_id:
         flash("You must log in first!", 401)
-        return redirect(url_for('s_login'))
+        return redirect(url_for('unified_login'))
     # Fetch all complaints related to the user
 
     complaints = acad.query.filter_by(name=user_id).all()
@@ -310,38 +401,38 @@ def view_complaint():
 
 
 
-#teacher login
-@app.route('/teacher_login', methods=['GET', 'POST'])
-def t_login():
-    if request.method == 'POST':
-        empid = request.form['empid']
-        password = request.form['password']
+# #teacher login
+# @app.route('/teacher_login', methods=['GET', 'POST'])
+# def t_login():
+#     if request.method == 'POST':
+#         empid = request.form['empid']
+#         password = request.form['password']
 
-        with engine.connect() as conn:
-            query = select(teachers).where(teachers.c.employee_id == empid)
-            result = conn.execute(query).fetchone()
+#         with engine.connect() as conn:
+#             query = select(teachers).where(teachers.c.employee_id == empid)
+#             result = conn.execute(query).fetchone()
 
-            if result:
-                db_password = result[1]  # Assuming 2nd column is password
-                name = result[2]         # Assuming 3rd column is name
+#             if result:
+#                 db_password = result[1]  # Assunified_loginnd column is password
+#                 name = result[2]         # Assuming 3rd column is name
 
-                if password == db_password:
-                    session['user'] = name
-                    flash("Login successful", category='success')
-                    return redirect(url_for('t_interface'))
-                else:
-                    flash("Invalid password")
-            else:
-                flash("Employee ID not found")
+#                 if password == db_password:
+#                     session['user'] = name
+#                     flash("Login successful", category='success')
+#                     return redirect(url_for('t_interface'))
+#                 else:
+#                     flash("Invalid password")
+#             else:
+#                 flash("Employee ID not found")
 
-    return render_template('t_login.html')
+#     return render_template('t_login.html')
 
 @app.route('/t_interface')
 def t_interface():
     name=session.get('user')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('t_login'))
+        return redirect(url_for('unified_login'))
     return render_template('t_interface.html',name=name)
 
 @app.route('/t_complaint',methods=['GET','POST'])
@@ -349,21 +440,21 @@ def t_complaint():
     name=session.get('user')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('t_login'))
+        return redirect(url_for('unified_login'))
     return render_template('t_complaint.html')
 @app.route('/t_anonymous',methods=['GET','POST'])
 def t_anonymous():
     name=session.get('user')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('t_login'))
+        return redirect(url_for('unified_login'))
     return render_template('t_anonymous.html')
 @app.route('/t_suggestion',methods=['GET','POST'])
 def t_suggestion():
     name=session.get('user')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('t_login'))
+        return redirect(url_for('unified_login'))
     return render_template('t_suggest.html')
 @app.route('/t_view',methods=['GET','POST'])
 def t_view_page():
@@ -371,7 +462,7 @@ def t_view_page():
     name= session.get('user')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('t_login'))
+        return redirect(url_for('unified_login'))
     complaints=T_Complaints.query.filter_by(name=name).all()
     suggest=T_Suggestion.query.filter_by(name=name).all()
     anonymous=T_Anonymous.query.filter_by(name=name).all()
@@ -386,7 +477,7 @@ def submit_t_complaints():
     name=session.get('user')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('t_login'))
+        return redirect(url_for('unified_login'))
     title=request.form['title']
     desc=request.form['details']
     category=request.form['category']
@@ -406,7 +497,7 @@ def submit_t_suggest():
     name=session.get('user')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('t_login'))
+        return redirect(url_for('unified_login'))
     title=request.form['title']
     category=request.form['category']
     desc=request.form['details']
@@ -425,7 +516,7 @@ def submit_t_anonymous():
     name=session.get('user')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('t_login'))
+        return redirect(url_for('unified_login'))
     category=request.form['category']
     desc=request.form['details']
     st1=T_Anonymous(name=session['user'],category=category,complaint=desc)
@@ -435,62 +526,62 @@ def submit_t_anonymous():
     flash("Form Submitted Successfully",category='success')
     return redirect(url_for('t_interface'))
 
-#admin login
-@app.route('/admin_login',methods=['GET','POST'])
-def admin_login():
-    if request.method=='POST':
-        userid=request.form['username']
-        password=request.form['password']
+# #admin login
+# @app.route('/admin_login',methods=['GET','POST'])
+# def admin_login():
+#     if request.method=='POST':
+#         userid=request.form['username']
+#         password=request.form['password']
 
-        with engine.connect() as conn:
-            query=select(admins).where(admins.c.admin_id==userid)
-            result=conn.execute(query).fetchone()
+#         with engine.connect() as conn:
+#             query=select(admins).where(admins.c.admin_id==userid)
+#             result=conn.execute(query).fetchone()
 
-            if result:
-                db_password=result[1]
-                name=result[2]
-                category=result[3]
+#             if result:
+#                 db_password=result[1]
+#                 name=result[2]
+#                 category=result[3]
 
-                if password==db_password:
-                    session['username']=name
-                    session['category']=category
-                    if category=='Hostel':
-                        flash("✅ Login successful",category='success')
-                        return redirect(url_for('admin_h_complaints'))
-                    elif category=='Sports':
-                        flash("✅ Login successful",category='success')
-                        return redirect(url_for('admin_sp_complaints'))
-                    elif category=='Bus':
-                        flash("✅ Login successful",category='success')
-                        return redirect(url_for('admin_bus_complaints'))
-                    elif category=='Mess':
-                        flash("✅ Login successful",category='success')
-                        return redirect(url_for('admin_m_complaints'))
-                    elif category=='Academics':
-                        flash("✅ Login successful",category='success')
-                        return redirect(url_for('admin_a_complaints'))
-                    elif category=='Basic Amenities':
-                        flash("✅ Login successful",category='success')
-                        return redirect(url_for('admin_bas_complaints'))
-                    elif category=='Officials':
-                        flash("✅ Login successful",category='success')
-                        return redirect(url_for('view_admin_complaint'))
-                    else:
-                        flash("Anauthorised Access!!!!!!",category='Danger')
+#                 if password==db_password:
+#                     session['username']=name
+#                     session['category']=category
+#                     if category=='Hostel':
+#                         flash("✅ Login successful",category='success')
+#                         return redirect(url_for('admin_h_complaints'))
+#                     elif category=='Sports':
+#                         flash("✅ Login successful",category='success')
+#                         return redirect(url_for('admin_sp_complaints'))
+#                     elif category=='Bus':
+#                         flash("✅ Login successful",category='success')
+#                         return redirect(url_for('admin_bus_complaints'))
+#                     elif category=='Mess':
+#                         flash("✅ Login successful",category='success')
+#                         return redirect(url_for('admin_m_complaints'))
+#                     elif category=='Academics':
+#                         flash("✅ Login successful",category='success')
+#                         return redirect(url_for('admin_a_complaints'))
+#                     elif category=='Basic Amenities':
+#                         flash("✅ Login successful",category='success')
+#                         return redirect(url_for('admin_bas_complaints'))
+#                     elif category=='Officials':
+#                         flash("✅ Login successful",category='success')
+#                         return redirect(url_for('officials_unified_dashboard'))
+#                     else:
+#                         flash("Anauthorised Access!!!!!!",category='Danger')
                     
-                else:
-                    flash("Invalid Password")
-            else:
-                flash("Admin Id not found !!!!",category='Danger')
+#                 else:
+#                     flash("Invalid Password")
+#             else:
+#                 flash("Admin Id not found !!!!",category='Danger')
 
-    return render_template('admin_login.html')
+    # return render_template('admin_login.html')
 
 @app.route('/admin_a_complaints', methods=['GET', 'POST'])
 def admin_a_complaints():
     name = session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     category = session.get('category')
 
     if request.method == 'POST':
@@ -518,12 +609,12 @@ def admin_a_complaints():
 
 
 
-@app.route('/admin_h_complaints')
+@app.route('/admin_h_complaints', methods=['GET', 'POST'])
 def admin_h_complaints():
     name = session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -543,15 +634,19 @@ def admin_h_complaints():
                 complaint.date_resolved = None
 
             db.session.commit()
+            flash(f"Complaint #{complaint_id} updated successfully!", 'success')
+        else:
+            flash("Complaint not found!", 'error')
+            
     complaints=hostel.query.all()
     return render_template('ad_h_inter.html',complaints=complaints,name=name,category=category)
 
-@app.route('/admin_m_complaints')
+@app.route('/admin_m_complaints', methods=['GET', 'POST'])
 def admin_m_complaints():
     name = session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -571,15 +666,19 @@ def admin_m_complaints():
                 complaint.date_resolved = None
 
             db.session.commit()
+            flash(f"Complaint #{complaint_id} updated successfully!", 'success')
+        else:
+            flash("Complaint not found!", 'error')
+            
     complaints=mess.query.all()
     return render_template('ad_mes_inter.html',complaints=complaints,name=name,category=category)
 
-@app.route('/admin_sp_complaints')
+@app.route('/admin_sp_complaints', methods=['GET', 'POST'])
 def admin_sp_complaints():
     name = session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -599,16 +698,19 @@ def admin_sp_complaints():
                 complaint.date_resolved = None
 
             db.session.commit()
+            flash(f"Complaint #{complaint_id} updated successfully!", 'success')
+        else:
+            flash("Complaint not found!", 'error')
     
     complaints=sports.query.all()
     return render_template('ad_spo_inter.html',complaints=complaints,name=name,category=category)
 
-@app.route('/admin_bas_complaints')
+@app.route('/admin_bas_complaints', methods=['GET', 'POST'])
 def admin_bas_complaints():
     name = session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -628,16 +730,19 @@ def admin_bas_complaints():
                 complaint.date_resolved = None
 
             db.session.commit()
+            flash(f"Complaint #{complaint_id} updated successfully!", 'success')
+        else:
+            flash("Complaint not found!", 'error')
 
     complaints=basic.query.all()
     return render_template('ad_bas_inter.html',complaints=complaints,name=name,category=category)
 
-@app.route('/admin_bus_complaints')
+@app.route('/admin_bus_complaints', methods=['GET', 'POST'])
 def admin_bus_complaints():
     name = session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     category=session.get('category')
 
     if request.method == 'POST':
@@ -657,25 +762,29 @@ def admin_bus_complaints():
                 complaint.date_resolved = None
 
             db.session.commit()
+            flash(f"Complaint #{complaint_id} updated successfully!", 'success')
+        else:
+            flash("Complaint not found!", 'error')
+            
     complaints=buses.query.all()
     return render_template('ad_bus_inter.html',complaints=complaints,name=name,category=category)
 
 
-@app.route('/off_view_complaints')
-def view_admin_complaint():
-    name = session.get('username')
-    if not name:
-        flash("Please login first.")
-        return redirect(url_for('admin_login'))
-    category=session.get('category')
-    return render_template('ad_off_inter.html',name=name,category=category)
+# @app.route('/off_view_complaints')
+# def view_admin_complaint():
+#     name = session.get('username')
+#     if not name:
+#         flash("Please login first.")
+#         return redirect(url_for('admin_login'))
+#     category=session.get('category')
+#     return render_template('ad_off_inter.html',name=name,category=category)
 
 @app.route('/view_teacher_complaints')
 def view_teacher_complaints():
     name = session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     category=session.get('category')
     complaints=T_Complaints.query.all()
     suggest=T_Suggestion.query.all()
@@ -689,7 +798,7 @@ def view_student_complaints():
     name= session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     complaints=acad.query.all()
     hostels=hostel.query.all()
     mes=mess.query.all()
@@ -698,7 +807,445 @@ def view_student_complaints():
     sg=s_suggest.query.all()
     an=s_anonymous.query.all()
     bas=basic.query.all()
-    return render_template('ad_students_complaints.html',complaints=complaints,hostels=hostels,mes=mes,sp=sp,bs=bs,sg=sg,an=an,bas=bas)
+    return render_template('ad_students_complaints.html',complaints=complaints,hostels=hostels,mes=mes,sp=sp,bs=bs,sg=sg,an=an,bas=bas,name=name,category=session.get('category'))
+
+# Teacher complaint management routes for Officials
+@app.route('/update_teacher_complaint', methods=['POST'])
+def update_teacher_complaint():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    item_id = request.form.get('item_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    complaint = T_Complaints.query.get(item_id)
+    if complaint:
+        complaint.status = new_status
+        complaint.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            complaint.date_resolved = datetime.now()
+        else:
+            complaint.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Teacher complaint #{item_id} updated successfully!", 'success')
+    else:
+        flash("Complaint not found!", 'error')
+        
+    return redirect(url_for('view_teacher_complaints'))
+
+@app.route('/update_teacher_suggestion', methods=['POST'])
+def update_teacher_suggestion():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    item_id = request.form.get('item_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    suggestion = T_Suggestion.query.get(item_id)
+    if suggestion:
+        suggestion.status = new_status
+        suggestion.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            suggestion.date_resolved = datetime.now()
+        else:
+            suggestion.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Teacher suggestion #{item_id} updated successfully!", 'success')
+    else:
+        flash("Suggestion not found!", 'error')
+        
+    return redirect(url_for('view_teacher_complaints'))
+
+@app.route('/update_teacher_anonymous', methods=['POST'])
+def update_teacher_anonymous():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    item_id = request.form.get('item_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    anonymous = T_Anonymous.query.get(item_id)
+    if anonymous:
+        anonymous.status = new_status
+        anonymous.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            anonymous.date_resolved = datetime.now()
+        else:
+            anonymous.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Anonymous teacher report #{item_id} updated successfully!", 'success')
+    else:
+        flash("Anonymous report not found!", 'error')
+        
+    return redirect(url_for('view_teacher_complaints'))
+
+# Unified Officials Dashboard Route
+@app.route('/officials_unified_dashboard')
+def officials_unified_dashboard():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.")
+        return redirect(url_for('unified_login'))
+    
+    category = session.get('category')
+    
+    # Teacher data
+    teacher_complaints = T_Complaints.query.all()
+    teacher_suggestions = T_Suggestion.query.all()
+    teacher_anonymous = T_Anonymous.query.all()
+    
+    # Student data
+    complaints = acad.query.all()
+    hostels = hostel.query.all()
+    mes = mess.query.all()
+    sp = sports.query.all()
+    bs = buses.query.all()
+    sg = s_suggest.query.all()
+    an = s_anonymous.query.all()
+    bas = basic.query.all()
+    
+    return render_template(
+        'officials_unified_dashboard.html',
+        name=name,
+        category=category,
+        # Teacher data
+        teacher_complaints=teacher_complaints,
+        teacher_suggestions=teacher_suggestions,
+        teacher_anonymous=teacher_anonymous,
+        # Student data
+        complaints=complaints,
+        hostels=hostels,
+        mes=mes,
+        sp=sp,
+        bs=bs,
+        sg=sg,
+        an=an,
+        bas=bas
+    )
+
+# Unified Update Routes for Officials Dashboard
+@app.route('/update_teacher_complaint_unified', methods=['POST'])
+def update_teacher_complaint_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    complaint = T_Complaints.query.get(complaint_id)
+    if complaint:
+        complaint.status = new_status
+        complaint.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            complaint.date_resolved = datetime.now()
+        else:
+            complaint.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Teacher complaint #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Complaint not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_teacher_suggestion_unified', methods=['POST'])
+def update_teacher_suggestion_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    suggestion = T_Suggestion.query.get(complaint_id)
+    if suggestion:
+        suggestion.status = new_status
+        suggestion.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            suggestion.date_resolved = datetime.now()
+        else:
+            suggestion.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Teacher suggestion #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Suggestion not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_teacher_anonymous_unified', methods=['POST'])
+def update_teacher_anonymous_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    anonymous = T_Anonymous.query.get(complaint_id)
+    if anonymous:
+        anonymous.status = new_status
+        anonymous.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            anonymous.date_resolved = datetime.now()
+        else:
+            anonymous.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Anonymous teacher report #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Anonymous report not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_student_academic', methods=['POST'])
+def update_student_academic_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    complaint = acad.query.get(complaint_id)
+    if complaint:
+        complaint.status = new_status
+        complaint.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            complaint.date_resolved = datetime.now()
+        else:
+            complaint.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Academic complaint #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Complaint not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_student_hostel', methods=['POST'])
+def update_student_hostel_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    complaint = hostel.query.get(complaint_id)
+    if complaint:
+        complaint.status = new_status
+        complaint.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            complaint.date_resolved = datetime.now()
+        else:
+            complaint.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Hostel complaint #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Complaint not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_student_mess', methods=['POST'])
+def update_student_mess_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    complaint = mess.query.get(complaint_id)
+    if complaint:
+        complaint.status = new_status
+        complaint.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            complaint.date_resolved = datetime.now()
+        else:
+            complaint.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Mess complaint #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Complaint not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_student_sports', methods=['POST'])
+def update_student_sports_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    complaint = sports.query.get(complaint_id)
+    if complaint:
+        complaint.status = new_status
+        complaint.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            complaint.date_resolved = datetime.now()
+        else:
+            complaint.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Sports complaint #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Complaint not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_student_bus', methods=['POST'])
+def update_student_bus_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    complaint = buses.query.get(complaint_id)
+    if complaint:
+        complaint.status = new_status
+        complaint.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            complaint.date_resolved = datetime.now()
+        else:
+            complaint.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Bus complaint #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Complaint not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_student_basic', methods=['POST'])
+def update_student_basic_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    complaint = basic.query.get(complaint_id)
+    if complaint:
+        complaint.status = new_status
+        complaint.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            complaint.date_resolved = datetime.now()
+        else:
+            complaint.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Basic amenities complaint #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Complaint not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_student_suggestion', methods=['POST'])
+def update_student_suggestion_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    suggestion = s_suggest.query.get(complaint_id)
+    if suggestion:
+        suggestion.status = new_status
+        suggestion.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            suggestion.date_resolved = datetime.now()
+        else:
+            suggestion.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Student suggestion #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Suggestion not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
+
+@app.route('/update_student_anonymous', methods=['POST'])
+def update_student_anonymous_unified():
+    name = session.get('username')
+    if not name:
+        flash("Please login first.", 'error')
+        return redirect(url_for('unified_login'))
+    
+    complaint_id = request.form.get('complaint_id')
+    new_status = request.form.get('status')
+    response_text = request.form.get('response')
+    
+    anonymous = s_anonymous.query.get(complaint_id)
+    if anonymous:
+        anonymous.status = new_status
+        anonymous.response = response_text
+        
+        if new_status.lower() == 'resolved':
+            anonymous.date_resolved = datetime.now()
+        else:
+            anonymous.date_resolved = None
+            
+        db.session.commit()
+        flash(f"Anonymous student report #{complaint_id} updated successfully!", 'success')
+    else:
+        flash("Anonymous report not found!", 'error')
+        
+    return redirect(url_for('officials_unified_dashboard'))
 
 
 
@@ -707,7 +1254,7 @@ def get_complaint_details(complaint_id):
     name= session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     # Fetch complaint from your database
     complaint = db.session.query(hostel).filter_by(id=complaint_id).first()
     
@@ -734,7 +1281,7 @@ def update_complaint():
     name= session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "error": "No data provided"}), 400
@@ -793,7 +1340,7 @@ def update_hostel_complaint():
     name= session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     try:
         # Get JSON data from request
         data = request.get_json()
@@ -861,7 +1408,7 @@ def update_basic_complaint():
     name= session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     complaint_id = request.form.get("id")
     status = request.form.get("status")
     response = request.form.get("response")
@@ -890,7 +1437,7 @@ def update_mess_complaint():
     name= session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     complaint_id = request.form.get("id")
     status = request.form.get("status")
     response = request.form.get("response")
@@ -918,7 +1465,7 @@ def update_sports_complaint():
     name= session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     complaint_id = request.form.get("id")
     status = request.form.get("status")
     response = request.form.get("response")
@@ -947,7 +1494,7 @@ def update_bus_complaint():
     name= session.get('username')
     if not name:
         flash("Please login first.")
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('unified_login'))
     complaint_id = request.form.get("id")
     status = request.form.get("status")
     response = request.form.get("response")

@@ -572,15 +572,7 @@
   <div class="content-card active" id="complaints-container">
     <div class="card-header">
       <h3>All Complaints</h3>
-      <div class="search-filter">
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search complaints...">
-        </div>
-        <button class="filter-btn">
-          <i class="fas fa-filter"></i> Filter
-        </button>
-      </div>
+      
     </div>
     
     <div class="table-responsive">
@@ -593,7 +585,7 @@
             <th>Category</th>
             <th>Date</th>
             <th>Status</th>
-            <th>Actions</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -606,14 +598,8 @@
               <td>{{ c.category }}</td>
               <td>{{ c.date }}</td>
               <td><span class="status-badge status-pending">Pending</span></td>
-              <td>
-                <button class="action-btn" title="View details">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <button class="action-btn" title="Mark as resolved">
-                  <i class="fas fa-check"></i>
-                </button>
-              </td>
+              
+              
             </tr>
             {% endfor %}
           {% else %}
@@ -636,15 +622,7 @@
   <div class="content-card" id="suggestions-container">
     <div class="card-header">
       <h3>All Suggestions</h3>
-      <div class="search-filter">
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search suggestions...">
-        </div>
-        <button class="filter-btn">
-          <i class="fas fa-filter"></i> Filter
-        </button>
-      </div>
+      
     </div>
     
     <div class="table-responsive">
@@ -656,7 +634,7 @@
             <th>Category</th>
             <th>Description</th>
             <th>Date</th>
-            <th>Actions</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -668,11 +646,7 @@
               <td>{{ s.category }}</td>
               <td>{{ s.complaint|truncate(50) }}</td>
               <td>{{ s.date }}</td>
-              <td>
-                <button class="action-btn" title="View details">
-                  <i class="fas fa-eye"></i>
-                </button>
-              </td>
+              
             </tr>
             {% endfor %}
           {% else %}
@@ -695,15 +669,7 @@
   <div class="content-card" id="anonymous-container">
     <div class="card-header">
       <h3>Anonymous Complaints</h3>
-      <div class="search-filter">
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search anonymous...">
-        </div>
-        <button class="filter-btn">
-          <i class="fas fa-filter"></i> Filter
-        </button>
-      </div>
+      
     </div>
     
     <div class="table-responsive">
@@ -714,7 +680,7 @@
             <th>Title</th>
             <th>Category</th>
             <th>Description</th>
-            <th>Actions</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -725,11 +691,7 @@
               <td>{{ a.title }}</td>
               <td>{{ a.category }}</td>
               <td>{{ a.complaint|truncate(50) }}</td>
-              <td>
-                <button class="action-btn" title="View details">
-                  <i class="fas fa-eye"></i>
-                </button>
-              </td>
+              
             </tr>
             {% endfor %}
           {% else %}

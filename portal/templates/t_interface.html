@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -241,7 +242,12 @@
       overflow: hidden;
       box-shadow: var(--shadow-lg);
       border: 1px solid var(--glass-border);
-      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none; /* Remove default link underline */
+      color: inherit; /* Inherit text color */
+      z-index: 1; /* Ensure card is clickable */
     }
 
     .card::before {
@@ -321,7 +327,6 @@
       align-items: center;
       gap: 0.75rem;
       padding: 0.9rem 2rem;
-      text-decoration: none;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: var(--light);
       border-radius: var(--border-radius);
@@ -330,9 +335,10 @@
       transition: var(--transition);
       box-shadow: var(--shadow);
       border: none;
-      cursor: pointer;
       position: relative;
       overflow: hidden;
+      text-decoration: none; /* Ensure no underline */
+      margin-top: auto; /* Push button to bottom of card */
     }
 
     .card-btn::before {
@@ -346,12 +352,12 @@
       transition: var(--transition);
     }
 
-    .card-btn:hover {
+    .card:hover .card-btn {
       transform: translateY(-3px);
       box-shadow: var(--shadow-md);
     }
 
-    .card-btn:hover::before {
+    .card:hover .card-btn::before {
       left: 100%;
     }
 
@@ -359,7 +365,7 @@
       transition: transform 0.3s ease;
     }
 
-    .card-btn:hover i {
+    .card:hover .card-btn i {
       transform: translateX(3px);
     }
 
@@ -592,9 +598,9 @@
 
   <!-- Modern Navbar -->
   <nav class="navbar">
-    <a href="{{url_for('t_view_page')}}" class="logo">
+    <a href="/t_view" class="logo">
       <i class="fas fa-clipboard-list"></i>
-      <span>Teacher Portal</span>
+      <span>My Complaints</span>
     </a>
     <div class="right">
       <span class="welcome">
@@ -609,18 +615,7 @@
   </nav>
 
   <!-- Flash messages -->
-  <div class="flash-container">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="flash-message flash-{{ category }}">
-            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-  </div>
+  {% include 'flash.html' %}
 
   <!-- Enhanced Header -->
   <header class="header">
@@ -630,41 +625,41 @@
 
   <!-- Modern Dashboard Cards -->
   <main class="dashboard">
-    <div class="card">
+    <a href="/t_complaint" class="card">
       <div class="card-icon">
         <i class="fas fa-exclamation-triangle"></i>
       </div>
       <h3>Register Complaint</h3>
       <p>Report problems you are facing in your class, lab, or department. Your concerns will be addressed promptly by the administration.</p>
-      <a href="{{ url_for('t_complaint') }}" class="card-btn">
+      <div class="card-btn">
         <span>File Complaint</span>
         <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
+      </div>
+    </a>
 
-    <div class="card">
+    <a href="/t_suggestion" class="card">
       <div class="card-icon">
         <i class="fas fa-lightbulb"></i>
       </div>
       <h3>Give Suggestion</h3>
       <p>Share constructive ideas for improving academics, campus environment, or institutional processes to help us grow together.</p>
-      <a href="{{ url_for('t_suggestion') }}" class="card-btn">
+      <div class="card-btn">
         <span>Share Ideas</span>
         <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
+      </div>
+    </a>
 
-    <div class="card">
+    <a href="/t_anonymous" class="card">
       <div class="card-icon">
         <i class="fas fa-user-secret"></i>
       </div>
       <h3>Report Anonymously</h3>
       <p>Raise serious concerns without revealing your identity. Complete confidentiality guaranteed with end-to-end encryption.</p>
-      <a href="{{ url_for('t_anonymous') }}" class="card-btn">
+      <div class="card-btn">
         <span>Anonymous Report</span>
         <i class="fas fa-arrow-right"></i>
-      </a>
-    </div>
+      </div>
+    </a>
   </main>
   
   <!-- Enhanced Info Container -->
@@ -722,6 +717,12 @@
         card.addEventListener('mouseleave', () => {
           card.style.transform = '';
           card.style.boxShadow = '';
+        });
+
+        // Log navigation for debugging
+        card.addEventListener('click', (event) => {
+          const href = card.getAttribute('href');
+          console.log(`Navigating to: ${href}`);
         });
       });
     });

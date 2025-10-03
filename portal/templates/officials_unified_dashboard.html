@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officials Dashboard - Complete Complaint Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #f72585;
+            --secondary-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #3498db;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .back-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background-color: #e01e63;
+            transform: translateY(-1px);
+        }
+        
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .welcome-section h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .welcome-section p {
+            margin: 15px 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .main-tabs {
+            display: flex;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin-bottom: 0;
+        }
+        
+        .main-tab-btn {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .main-tab-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .main-tab-btn.active {
+            background-color: var(--primary-color);
+        }
+        
+        .main-tab-content {
+            display: none;
+            background: white;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 0;
+        }
+        
+        .main-tab-content.active {
+            display: block;
+        }
+        
+        .dashboard-stats {
+    display: flex;
+    flex-wrap: wrap;              /* allow items to wrap into new rows */
+    gap: 15px;                    /* space between items */
+    margin: 20px;
+    margin-bottom: 30px;
+    justify-content: space-between; /* control horizontal alignment */
+}
+.dashboard-stats > div {
+    flex: 1 1 140px;  /* grow, shrink, min-width */
+    min-width: 140px; /* ensures boxes don’t shrink below 140px */
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+        
+        .stat-card.teacher-card {
+            border-left: 4px solid var(--info-color);
+        }
+        
+        .stat-card.student-card {
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .stat-card i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+        
+        .stat-card h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+        }
+        
+        .stat-card p {
+            margin: 5px 0 0;
+            color: #7f8c8d;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .sub-tabs {
+            display: flex;
+            background-color: #34495e;
+            flex-wrap: wrap;
+        }
+        
+        .sub-tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            min-width: 100px;
+        }
+        
+        .sub-tab-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sub-tab-btn.active {
+            background-color: var(--primary-color);
+        }
+        
+        .sub-tab-content {
+            display: none;
+            padding: 20px;
+            min-height: 400px;
+        }
+        
+        .sub-tab-content.active {
+            display: block;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.8rem;
+        }
+        
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-in-progress { background-color: #cce5ff; color: #004085; }
+        .status-resolved { background-color: #d4edda; color: #155724; }
+        
+        .action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.7rem;
+        }
+        
+        .manage-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .manage-btn:hover {
+            background-color: #e01e63;
+        }
+        
+        .logout-btn {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        .empty-state h3 {
+            margin: 10px 0;
+            font-weight: 500;
+            font-size: 1.3rem;
+        }
+        
+        .complaint-text {
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .complaint-text:hover {
+            white-space: normal;
+            overflow: visible;
+        }
+        
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            width: 600px;
+            max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .close-btn:hover {
+            color: var(--danger-color);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #e01e63;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Flash messages */
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: var(--box-shadow);
+            opacity: 0;
+            animation: slideIn 0.3s ease forwards;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .section-divider {
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(90deg, #f72585, #3498db);
+            color: white;
+            text-align: center;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+    .main-tabs {
+        flex-direction: column;
+    }
+    
+    .sub-tabs {
+        flex-direction: column;
+    }
+    
+    .sub-tab-btn, .main-tab-btn {
+        min-width: auto;
+        flex: none;
+    }
+    
+    .dashboard-stats {
+        flex-direction: column;   /* stack items vertically */
+        gap: 10px;                /* smaller gap on mobile */
+    }
+}
+
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    {% include 'flash.html' %}
+
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <div>
+                    <h2><i class="fas fa-users-cog"></i> Officials Dashboard</h2>
+                    <p>Welcome, {{ name }} | Complete Complaint Management System</p>
+                </div>
+            </div>
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+
+        <div class="welcome-section">
+            <h1><i class="fas fa-shield-alt"></i> Unified Complaint Management</h1>
+            <p>Comprehensive oversight and management of all teacher and student complaints across the university</p>
+        </div>
+
+        <!-- Main Tabs -->
+        <div class="main-tabs">
+            <button class="main-tab-btn active" onclick="showMainTab('teachers')">
+                <i class="fas fa-chalkboard-teacher"></i>
+                Teacher Complaints
+            </button>
+            <button class="main-tab-btn" onclick="showMainTab('students')">
+                <i class="fas fa-user-graduate"></i>
+                Student Complaints
+            </button>
+        </div>
+
+        <!-- Teacher Complaints Tab -->
+        <div id="teachers" class="main-tab-content active">
+            <!-- Teacher Statistics -->
+            <div class="dashboard-stats">
+                <div class="stat-card teacher-card">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h3>{{ teacher_complaints|length }}</h3>
+                    <p>Complaints</p>
+                </div>
+                <div class="stat-card teacher-card">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3>{{ teacher_suggestions|length }}</h3>
+                    <p>Suggestions</p>
+                </div>
+                <div class="stat-card teacher-card">
+                    <i class="fas fa-user-secret"></i>
+                    <h3>{{ teacher_anonymous|length }}</h3>
+                    <p>Anonymous</p>
+                </div>
+            </div>
+
+            <div class="section-divider">
+                <i class="fas fa-chalkboard-teacher"></i> Teacher Complaint Management
+            </div>
+
+            <div class="sub-tabs">
+                <button class="sub-tab-btn active" onclick="showSubTab('teacher-complaints', this)">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Complaints ({{ teacher_complaints|length }})
+                </button>
+                <button class="sub-tab-btn" onclick="showSubTab('teacher-suggestions', this)">
+                    <i class="fas fa-lightbulb"></i>
+                    Suggestions ({{ teacher_suggestions|length }})
+                </button>
+                <button class="sub-tab-btn" onclick="showSubTab('teacher-anonymous', this)">
+                    <i class="fas fa-user-secret"></i>
+                    Anonymous ({{ teacher_anonymous|length }})
+                </button>
+            </div>
+
+            <!-- Teacher Complaints Sub-tab -->
+            <div id="teacher-complaints" class="sub-tab-content active">
+                {% if teacher_complaints %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Teacher</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Complaint</th>
+                                    <th>Others</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in teacher_complaints %}
+                                <tr>
+                                    <td><strong>#{{ complaint.id }}</strong></td>
+                                    <td>{{ complaint.name }}</td>
+                                    <td>{{ complaint.title }}</td>
+                                    <td>{{ complaint.category }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ complaint.complaint }}">
+                                            {{ complaint.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>{{ complaint.others or '-' }}</td>
+                                    <td>{{ complaint.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ complaint.status.lower().replace(' ', '-') }}">
+                                            {{ complaint.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ complaint.id }}, 'teacher_complaint', '{{ complaint.name }}', '{{ complaint.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ complaint.status }}', '{{ complaint.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Teacher', '{{ complaint.category }}')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <h3>No Teacher Complaints</h3>
+                        <p>No teacher complaints to display at this time.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Teacher Suggestions Sub-tab -->
+            <div id="teacher-suggestions" class="sub-tab-content">
+                {% if teacher_suggestions %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Teacher</th>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Details</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for suggestion in teacher_suggestions %}
+                                <tr>
+                                    <td><strong>#{{ suggestion.id }}</strong></td>
+                                    <td>{{ suggestion.name }}</td>
+                                    <td>{{ suggestion.title }}</td>
+                                    <td>{{ suggestion.category }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ suggestion.complaint }}">
+                                            {{ suggestion.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>{{ suggestion.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ suggestion.status.lower().replace(' ', '-') }}">
+                                            {{ suggestion.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ suggestion.id }}, 'teacher_suggestion', '{{ suggestion.name }}', '{{ suggestion.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ suggestion.status }}', '{{ suggestion.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Teacher', '{{ suggestion.category }}')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>No Teacher Suggestions</h3>
+                        <p>No teacher suggestions to display at this time.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Teacher Anonymous Sub-tab -->
+            <div id="teacher-anonymous" class="sub-tab-content">
+                {% if teacher_anonymous %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                   
+                                    <th>Category</th>
+                                    <th>Report</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in teacher_anonymous %}
+                                <tr>
+                                    <td><strong>#{{ report.id }}</strong></td>
+                                   
+                                    <td>{{ report.category }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ report.complaint }}">
+                                            {{ report.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-{{ report.status.lower().replace(' ', '-') }}">
+                                            {{ report.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ report.id }}, 'teacher_anonymous', '{{ report.name }}', '{{ report.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ report.status }}', '{{ report.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Teacher', '{{ report.category }}')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-user-secret"></i>
+                        <h3>No Anonymous Reports</h3>
+                        <p>No anonymous teacher reports to display at this time.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Student Complaints Tab -->
+        <!-- Note: Student database models not provided, preserving original structure -->
+        <div id="students" class="main-tab-content">
+            <!-- Student Statistics -->
+            <div class="dashboard-stats">
+                <div class="stat-card student-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>{{ complaints|length }}</h3>
+                    <p>Academic</p>
+                </div>
+                <div class="stat-card student-card">
+                    <i class="fas fa-bed"></i>
+                    <h3>{{ hostels|length }}</h3>
+                    <p>Hostel</p>
+                </div>
+                <div class="stat-card student-card">
+                    <i class="fas fa-utensils"></i>
+                    <h3>{{ mes|length }}</h3>
+                    <p>Mess</p>
+                </div>
+                <div class="stat-card student-card">
+                    <i class="fas fa-running"></i>
+                    <h3>{{ sp|length }}</h3>
+                    <p>Sports</p>
+                </div>
+                <div class="stat-card student-card">
+                    <i class="fas fa-bus"></i>
+                    <h3>{{ bs|length }}</h3>
+                    <p>Bus</p>
+                </div>
+                <div class="stat-card student-card">
+                    <i class="fas fa-tools"></i>
+                    <h3>{{ bas|length }}</h3>
+                    <p>Basic</p>
+                </div>
+                <div class="stat-card student-card">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3>{{ sg|length }}</h3>
+                    <p>Suggestions</p>
+                </div>
+                <div class="stat-card student-card">
+                    <i class="fas fa-user-secret"></i>
+                    <h3>{{ an|length }}</h3>
+                    <p>Anonymous</p>
+                </div>
+            </div>
+
+            <div class="section-divider">
+                <i class="fas fa-user-graduate"></i> Student Complaint Management
+            </div>
+
+            <div class="sub-tabs">
+                <button class="sub-tab-btn active" onclick="showSubTab('student-academic', this)">
+                    <i class="fas fa-graduation-cap"></i>
+                    Academic ({{ complaints|length }})
+                </button>
+                <button class="sub-tab-btn" onclick="showSubTab('student-hostel', this)">
+                    <i class="fas fa-bed"></i>
+                    Hostel ({{ hostels|length }})
+                </button>
+                <button class="sub-tab-btn" onclick="showSubTab('student-mess', this)">
+                    <i class="fas fa-utensils"></i>
+                    Mess ({{ mes|length }})
+                </button>
+                <button class="sub-tab-btn" onclick="showSubTab('student-sports', this)">
+                    <i class="fas fa-running"></i>
+                    Sports ({{ sp|length }})
+                </button>
+                <button class="sub-tab-btn" onclick="showSubTab('student-bus', this)">
+                    <i class="fas fa-bus"></i>
+                    Bus ({{ bs|length }})
+                </button>
+                <button class="sub-tab-btn" onclick="showSubTab('student-basic', this)">
+                    <i class="fas fa-tools"></i>
+                    Basic ({{ bas|length }})
+                </button>
+                <button class="sub-tab-btn" onclick="showSubTab('student-suggestions', this)">
+                    <i class="fas fa-lightbulb"></i>
+                    Suggestions ({{ sg|length }})
+                </button>
+                <button class="sub-tab-btn" onclick="showSubTab('student-anonymous', this)">
+                    <i class="fas fa-user-secret"></i>
+                    Anonymous ({{ an|length }})
+                </button>
+            </div>
+
+            <!-- Student Academic Sub-tab -->
+            <div id="student-academic" class="sub-tab-content active">
+                {% if complaints %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Student</th>
+                                    <th>Complaint</th>
+                                    <th>Course</th>
+                                    <th>Semester</th>
+                                    <th>Section</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in complaints %}
+                                <tr>
+                                    <td><strong>#{{ complaint.id }}</strong></td>
+                                    <td>{{ complaint.name }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ complaint.complaint }}">
+                                            {{ complaint.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>{{ complaint.course }}</td>
+                                    <td>{{ complaint.semester }}</td>
+                                    <td>{{ complaint.section }}</td>
+                                    <td>{{ complaint.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ complaint.status.lower().replace(' ', '-') }}">
+                                            {{ complaint.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ complaint.id }}, 'student_academic', '{{ complaint.name }}', '{{ complaint.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ complaint.status }}', '{{ complaint.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Student', 'Academic')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>No Academic Complaints</h3>
+                        <p>No student academic complaints to display.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Student Hostel Sub-tab -->
+            <div id="student-hostel" class="sub-tab-content">
+                {% if hostels %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Student</th>
+                                    <th>Complaint</th>
+                                    <th>Hostel</th>
+                                    <th>Room</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in hostels %}
+                                <tr>
+                                    <td><strong>#{{ complaint.id }}</strong></td>
+                                    <td>{{ complaint.name }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ complaint.complaint }}">
+                                            {{ complaint.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>{{ complaint.hostel_no }}</td>
+                                    <td>{{ complaint.room_no }}</td>
+                                    <td>{{ complaint.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ complaint.status.lower().replace(' ', '-') }}">
+                                            {{ complaint.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ complaint.id }}, 'student_hostel', '{{ complaint.name }}', '{{ complaint.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ complaint.status }}', '{{ complaint.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Student', 'Hostel')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-bed"></i>
+                        <h3>No Hostel Complaints</h3>
+                        <p>No student hostel complaints to display.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Student Mess Sub-tab -->
+            <div id="student-mess" class="sub-tab-content">
+                {% if mes %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Student</th>
+                                    <th>Complaint</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in mes %}
+                                <tr>
+                                    <td><strong>#{{ complaint.id }}</strong></td>
+                                    <td>{{ complaint.name }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ complaint.complaint }}">
+                                            {{ complaint.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>{{ complaint.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ complaint.status.lower().replace(' ', '-') }}">
+                                            {{ complaint.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ complaint.id }}, 'student_mess', '{{ complaint.name }}', '{{ complaint.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ complaint.status }}', '{{ complaint.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Student', 'Mess')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-utensils"></i>
+                        <h3>No Mess Complaints</h3>
+                        <p>No student mess complaints to display.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Student Sports Sub-tab -->
+            <div id="student-sports" class="sub-tab-content">
+                {% if sp %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Student</th>
+                                    <th>Complaint</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in sp %}
+                                <tr>
+                                    <td><strong>#{{ complaint.id }}</strong></td>
+                                    <td>{{ complaint.name }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ complaint.complaint }}">
+                                            {{ complaint.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>{{ complaint.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ complaint.status.lower().replace(' ', '-') }}">
+                                            {{ complaint.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ complaint.id }}, 'student_sports', '{{ complaint.name }}', '{{ complaint.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ complaint.status }}', '{{ complaint.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Student', 'Sports')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-running"></i>
+                        <h3>No Sports Complaints</h3>
+                        <p>No student sports complaints to display.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Student Bus Sub-tab -->
+            <div id="student-bus" class="sub-tab-content">
+                {% if bs %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Student</th>
+                                    <th>Complaint</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in bs %}
+                                <tr>
+                                    <td><strong>#{{ complaint.id }}</strong></td>
+                                    <td>{{ complaint.name }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ complaint.complaint }}">
+                                            {{ complaint.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>{{ complaint.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ complaint.status.lower().replace(' ', '-') }}">
+                                            {{ complaint.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ complaint.id }}, 'student_bus', '{{ complaint.name }}', '{{ complaint.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ complaint.status }}', '{{ complaint.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Student', 'Bus')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-bus"></i>
+                        <h3>No Bus Complaints</h3>
+                        <p>No student bus complaints to display.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Student Basic Sub-tab -->
+            <div id="student-basic" class="sub-tab-content">
+                {% if bas %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Student</th>
+                                    <th>Complaint</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complaint in bas %}
+                                <tr>
+                                    <td><strong>#{{ complaint.id }}</strong></td>
+                                    <td>{{ complaint.name }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ complaint.complaint }}">
+                                            {{ complaint.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>{{ complaint.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ complaint.status.lower().replace(' ', '-') }}">
+                                            {{ complaint.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ complaint.id }}, 'student_basic', '{{ complaint.name }}', '{{ complaint.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ complaint.status }}', '{{ complaint.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Student', 'Basic')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-tools"></i>
+                        <h3>No Basic Complaints</h3>
+                        <p>No student basic complaints to display.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Student Suggestions Sub-tab -->
+            <div id="student-suggestions" class="sub-tab-content">
+                {% if sg %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Student</th>
+                                    <th>Suggestion</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for suggestion in sg %}
+                                <tr>
+                                    <td><strong>#{{ suggestion.id }}</strong></td>
+                                    <td>{{ suggestion.name }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ suggestion.suggestion }}">
+                                            {{ suggestion.suggestion }}
+                                        </div>
+                                    </td>
+                                    <td>{{ suggestion.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ suggestion.status.lower().replace(' ', '-') }}">
+                                            {{ suggestion.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ suggestion.id }}, 'student_suggestion', '{{ suggestion.name }}', '{{ suggestion.suggestion|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ suggestion.status }}', '{{ suggestion.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Student', 'Suggestion')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>No Student Suggestions</h3>
+                        <p>No student suggestions to display.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Student Anonymous Sub-tab -->
+            <div id="student-anonymous" class="sub-tab-content">
+                {% if an %}
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Category</th>
+                                    <th>Report</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in an %}
+                                <tr>
+                                    <td><strong>#{{ report.id }}</strong></td>
+                                    <td>{{ report.category }}</td>
+                                    <td>
+                                        <div class="complaint-text" title="{{ report.complaint }}">
+                                            {{ report.complaint }}
+                                        </div>
+                                    </td>
+                                    <td>{{ report.date.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="status-badge status-{{ report.status.lower().replace(' ', '-') }}">
+                                            {{ report.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn manage-btn" onclick="openModal({{ report.id }}, 'student_anonymous', 'Anonymous', '{{ report.complaint|replace('\n', '\\n')|replace('\'', '\\\'') }}', '{{ report.status }}', '{{ report.response|default('', true)|replace('\n', '\\n')|replace('\'', '\\\'') }}', 'Student', '{{ report.category }}')">
+                                            <i class="fas fa-edit"></i>
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-user-secret"></i>
+                        <h3>No Anonymous Reports</h3>
+                        <p>No anonymous student reports to display.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Modal -->
+    <div class="modal" id="updateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Update Complaint/Report</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form method="POST" id="updateForm">
+                <input type="hidden" id="complaintId" name="complaint_id">
+                <input type="hidden" id="complaintType" name="complaint_type">
+                
+                <div class="form-group">
+                    <label>Type:</label>
+                    <input type="text" id="userType" class="form-control" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" id="userName" class="form-control" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>Category:</label>
+                    <input type="text" id="userDepartment" class="form-control" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>Details:</label>
+                    <textarea id="complaintText" class="form-control" rows="4" readonly></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select name="status" id="status" class="form-control" required>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="response">Official Response:</label>
+                    <textarea name="response" id="response" class="form-control" rows="4" placeholder="Enter your response..."></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showMainTab(tabName) {
+            // Hide all main tabs
+            const mainTabs = document.querySelectorAll('.main-tab-content');
+            const mainTabBtns = document.querySelectorAll('.main-tab-btn');
+            
+            mainTabs.forEach(tab => tab.classList.remove('active'));
+            mainTabBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected main tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function showSubTab(tabName, button) {
+            // Get the parent main tab content
+            const parentTab = button.closest('.main-tab-content');
+            
+            // Hide all sub-tabs within this parent
+            const subTabs = parentTab.querySelectorAll('.sub-tab-content');
+            const subTabBtns = parentTab.querySelectorAll('.sub-tab-btn');
+            
+            subTabs.forEach(tab => tab.classList.remove('active'));
+            subTabBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected sub-tab
+            document.getElementById(tabName).classList.add('active');
+            button.classList.add('active');
+        }
+        
+        function openModal(id, type, name, complaint, status, response, userType, category) {
+            document.getElementById('complaintId').value = id;
+            document.getElementById('complaintType').value = type;
+            document.getElementById('userName').value = name;
+            document.getElementById('userType').value = userType;
+            document.getElementById('userDepartment').value = category;
+            document.getElementById('complaintText').value = complaint;
+            document.getElementById('status').value = status;
+            document.getElementById('response').value = response || '';
+            document.getElementById('updateModal').style.display = 'flex';
+            
+            // Set form action based on type
+            const actions = {
+                'teacher_complaint': '/update_teacher_complaint_unified',
+                'teacher_suggestion': '/update_teacher_suggestion_unified',
+                'teacher_anonymous': '/update_teacher_anonymous_unified',
+                'student_academic': '/update_student_academic',
+                'student_hostel': '/update_student_hostel',
+                'student_mess': '/update_student_mess',
+                'student_sports': '/update_student_sports',
+                'student_bus': '/update_student_bus',
+                'student_basic': '/update_student_basic',
+                'student_suggestion': '/update_student_suggestion',
+                'student_anonymous': '/update_student_anonymous'
+            };
+            
+            document.getElementById('updateForm').action = actions[type] || '/update_complaint';
+        }
+        
+        function closeModal() {
+            document.getElementById('updateModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('updateModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateX(100%)';
+                setTimeout(function() {
+                    alert.remove();
+                }, 300);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
