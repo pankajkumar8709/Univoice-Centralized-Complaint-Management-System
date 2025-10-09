@@ -512,7 +512,7 @@
 <!-- Navigation Bar -->
 <nav class="navbar">
   <div>
-    <a href="{{ url_for('t_interface') }}" class="btn btn-outline">
+    <a style="text-decoration: none;" href="{{ url_for('t_interface') }}" class="btn btn-outline">
       <i class="fas fa-arrow-left"></i> Back to Dashboard
     </a>
   </div>
@@ -597,7 +597,7 @@
               <td>{{ c.complaint|truncate(50) }}</td>
               <td>{{ c.category }}</td>
               <td>{{ c.date }}</td>
-              <td><span class="status-badge status-pending">Pending</span></td>
+              <td><span class="status-badge status-pending">{{c.status}}</span></td>
               
               
             </tr>
@@ -634,6 +634,7 @@
             <th>Category</th>
             <th>Description</th>
             <th>Date</th>
+            <th>Status</th>
             
           </tr>
         </thead>
@@ -646,6 +647,7 @@
               <td>{{ s.category }}</td>
               <td>{{ s.complaint|truncate(50) }}</td>
               <td>{{ s.date }}</td>
+              <td><span class="status-badge status-pending">{{s.status}}</span></td>
               
             </tr>
             {% endfor %}
@@ -680,6 +682,7 @@
             <th>Title</th>
             <th>Category</th>
             <th>Description</th>
+            <th>status</th>
             
           </tr>
         </thead>
@@ -691,6 +694,7 @@
               <td>{{ a.title }}</td>
               <td>{{ a.category }}</td>
               <td>{{ a.complaint|truncate(50) }}</td>
+              <span class="status-badge status-pending">{{a.status}}</span>
               
             </tr>
             {% endfor %}

@@ -8,7 +8,7 @@ migrate = Migrate()
 
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///finalcomplaint.db'
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///finalcomplaint2.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'pankaj'
 db=SQLAlchemy(app)

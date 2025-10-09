@@ -11,7 +11,7 @@ from datetime import datetime
 def home():
     return render_template('home.html')
 
-# Unified Login Route
+
 @app.route('/login', methods=['GET', 'POST'])
 def unified_login():
     if request.method == 'POST':
@@ -31,12 +31,12 @@ def unified_login():
                     if password == db_password:
                         session['name'] = name
                         session['roll'] = roll
-                        flash("✅ Login successful", 'success')
+                        flash(" Login successful", 'success')
                         return redirect(url_for('s_interface'))
                     else:
-                        flash("❌ Incorrect password", 'error')
+                        flash(" Incorrect password", 'error')
                 else:
-                    flash("❌ Roll number not found", 'error')
+                    flash(" Roll number not found", 'error')
                     
         elif user_type == 'teacher':
             empid = request.form.get('empid') or request.form.get('username')
@@ -50,12 +50,12 @@ def unified_login():
                     
                     if password == db_password:
                         session['user'] = name
-                        flash("✅ Login successful", 'success')
+                        flash( "Login successful", 'success')
                         return redirect(url_for('t_interface'))
                     else:
-                        flash("❌ Invalid password", 'error')
+                        flash(" Invalid password", 'error')
                 else:
-                    flash("❌ Employee ID not found", 'error')
+                    flash(" Employee ID not found", 'error')
                     
         elif user_type == 'admin':
             userid = request.form.get('username')
@@ -73,32 +73,32 @@ def unified_login():
                         session['category'] = category
                         
                         if category == 'Hostel':
-                            flash("✅ Login successful", 'success')
+                            flash(" Login successful", 'success')
                             return redirect(url_for('admin_h_complaints'))
                         elif category == 'Sports':
-                            flash("✅ Login successful", 'success')
+                            flash(" Login successful", 'success')
                             return redirect(url_for('admin_sp_complaints'))
                         elif category == 'Bus':
-                            flash("✅ Login successful", 'success')
+                            flash(" Login successful", 'success')
                             return redirect(url_for('admin_bus_complaints'))
                         elif category == 'Mess':
-                            flash("✅ Login successful", 'success')
+                            flash(" Login successful", 'success')
                             return redirect(url_for('admin_m_complaints'))
                         elif category == 'Academics':
-                            flash("✅ Login successful", 'success')
+                            flash(" Login successful", 'success')
                             return redirect(url_for('admin_a_complaints'))
                         elif category == 'Basic Amenities':
-                            flash("✅ Login successful", 'success')
+                            flash(" Login successful", 'success')
                             return redirect(url_for('admin_bas_complaints'))
                         elif category == 'Officials':
-                            flash("✅ Login successful", 'success')
+                            flash(" Login successful", 'success')
                             return redirect(url_for('officials_unified_dashboard'))
                         else:
-                            flash("❌ Unauthorized Access!", 'error')
+                            flash(" Unauthorized Access!", 'error')
                     else:
-                        flash("❌ Invalid Password", 'error')
+                        flash(" Invalid Password", 'error')
                 else:
-                    flash("❌ Admin ID not found!", 'error')
+                    flash(" Admin ID not found!", 'error')
     
     return render_template('unified_login.html')
 
@@ -135,7 +135,7 @@ def unified_login():
 #     return render_template('s_login.html')
 
 
-# Student interface/dashboard
+# Student interface
 @app.route('/student', methods=['GET', 'POST'])
 def s_interface():
     name = session.get('name')
